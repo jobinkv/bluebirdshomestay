@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Book your stay at Bluebirds Homestay - Premium accommodation with modern amenities">
+    <title>Bluebirds Homestay - Book Your Perfect Stay</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">Bluebirds Homestay</a>
+            <button class="menu-toggle" id="menuToggle">☰</button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="rooms.html">Rooms</a></li>
+                <li><a href="#booking">Book Now</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Your Perfect Getaway Awaits</h1>
+            <p>Experience luxury and comfort at Bluebirds Homestay. Premium rooms with world-class amenities.</p>
+            <a href="#booking" class="cta-button">Book Your Stay</a>
+        </div>
+    </section>
+
+    <!-- Booking Form Section -->
+    <section id="booking" class="booking-section">
+        <div class="container">
+            <h2 class="section-title">Reserve Your Room</h2>
+            
+            <form class="booking-form" id="bookingForm">
+                <div class="form-grid">
+                    <!-- Check-in and Check-out Dates (Required) -->
+                    <div class="date-grid">
+                        <div class="form-group">
+                            <label for="checkIn">
+                                Check-In Date <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="date" 
+                                id="checkIn" 
+                                name="checkIn" 
+                                required
+                                min=""
+                            >
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="checkOut">
+                                Check-Out Date <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="date" 
+                                id="checkOut" 
+                                name="checkOut" 
+                                required
+                                min=""
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Guest Name (Optional) -->
+                    <div class="form-group">
+                        <label for="guestName">
+                            Full Name
+                        </label>
+                        <input 
+                            type="text" 
+                            id="guestName" 
+                            name="guestName" 
+                            placeholder="Enter your full name"
+                        >
+                    </div>
+
+                    <!-- Phone Number (Required) -->
+                    <div class="form-group">
+                        <label for="phone">
+                            Phone Number <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="tel" 
+                            id="phone" 
+                            name="phone" 
+                            placeholder="Enter your phone number"
+                            pattern="[0-9]{10}"
+                            required
+                        >
+                        <small style="color: var(--light-secondary); font-size: 0.85rem;">
+                            Please enter a 10-digit phone number
+                        </small>
+                    </div>
+
+                    <!-- Number of Rooms (Optional) -->
+                    <div class="form-group">
+                        <label for="numRooms">
+                            Number of Rooms
+                        </label>
+                        <select id="numRooms" name="numRooms">
+                            <option value="1">1 Room</option>
+                            <option value="2">2 Rooms</option>
+                            <option value="3">3 Rooms</option>
+                            <option value="4">4 Rooms</option>
+                            <option value="5">5+ Rooms</option>
+                        </select>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="submit-button">
+                        Complete Booking Request
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2026 Bluebirds Homestay. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="rooms.html">Rooms</a>
+                <a href="#booking">Book Now</a>
+            </div>
+            <p style="margin-top: 1rem; font-size: 0.9rem;">
+                Emergency Contact: <strong style="color: var(--accent-light);">9746282822</strong>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <div class="modal-icon">✓</div>
+            <h2>Thank You!</h2>
+            <p>Thanks for your interest in Bluebirds Homestay.</p>
+            <p>Our sales team will contact you for confirmation within 2 days.</p>
+            <div class="emergency-contact">
+                <p>In case of emergency, please call:</p>
+                <p><strong>9746282822</strong></p>
+            </div>
+            <p style="margin-top: 1.5rem; font-size: 0.9rem;">Thanks!</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
