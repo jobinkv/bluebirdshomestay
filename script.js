@@ -58,17 +58,14 @@ document.addEventListener('DOMContentLoaded', function () {
     // Form submission
     if (bookingForm) {
         bookingForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-
             // Get form values
             const checkIn = checkInInput.value;
             const checkOut = checkOutInput.value;
             const phone = document.getElementById('phone').value;
-            const guestName = document.getElementById('guestName').value;
-            const numRooms = document.getElementById('numRooms').value;
 
             // Validate required fields
             if (!checkIn || !checkOut || !phone) {
+                e.preventDefault();
                 alert('Please fill in all required fields (Check-in Date, Check-out Date, and Phone Number)');
                 return;
             }
@@ -76,33 +73,32 @@ document.addEventListener('DOMContentLoaded', function () {
             // Validate phone number (10 digits)
             const phoneRegex = /^[0-9]{10}$/;
             if (!phoneRegex.test(phone)) {
+                e.preventDefault();
                 alert('Please enter a valid 10-digit phone number');
                 return;
             }
 
             // Validate check-out is after check-in
             if (new Date(checkOut) <= new Date(checkIn)) {
+                e.preventDefault();
                 alert('Check-out date must be after check-in date');
                 return;
             }
 
-            // All validations passed - show success modal
-            console.log('Booking Details:', {
-                checkIn,
-                checkOut,
-                phone,
-                guestName: guestName || 'Not provided',
-                numRooms: numRooms || '1'
-            });
+            // Split check-in date into components for Google Forms
+            const checkInDate = new Date(checkIn);
+            document.getElementById('checkInYear').value = checkInDate.getFullYear();
+            document.getElementById('checkInMonth').value = checkInDate.getMonth() + 1; // Months are 0-indexed
+            document.getElementById('checkInDay').value = checkInDate.getDate();
 
-            // Show modal
-            if (successModal) {
-                successModal.classList.add('active');
-                document.body.style.overflow = 'hidden'; // Prevent background scroll
-            }
+            // Split check-out date into components for Google Forms
+            const checkOutDate = new Date(checkOut);
+            document.getElementById('checkOutYear').value = checkOutDate.getFullYear();
+            document.getElementById('checkOutMonth').value = checkOutDate.getMonth() + 1;
+            document.getElementById('checkOutDay').value = checkOutDate.getDate();
 
-            // Reset form
-            bookingForm.reset();
+            // Form will now submit to Google Forms automatically
+            // No need to prevent default or show modal
         });
     }
 

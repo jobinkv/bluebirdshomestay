@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Book your stay at Bluebirds Homestay - Premium accommodation with modern amenities">
+    <meta name="description"
+        content="Book your stay at Bluebirds Homestay - Premium accommodation with modern amenities">
     <title>Bluebirds Homestay - Book Your Perfect Stay</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <!-- Navigation -->
     <nav class="navbar">
@@ -34,35 +37,35 @@
     <section id="booking" class="booking-section">
         <div class="container">
             <h2 class="section-title">Reserve Your Room</h2>
-            
-            <form class="booking-form" id="bookingForm">
+
+            <form class="booking-form" id="bookingForm"
+                action="https://docs.google.com/forms/d/e/1FAIpQLSdXZjBhBQLrwtlCI2nx5d5cRaE5P4gCTh7uFTC__nQE5CA2Vw/formResponse"
+                method="POST" target="_blank">
                 <div class="form-grid">
+                    <!-- Hidden fields for check-in date components -->
+                    <input type="hidden" name="entry.352905302_year" id="checkInYear">
+                    <input type="hidden" name="entry.352905302_month" id="checkInMonth">
+                    <input type="hidden" name="entry.352905302_day" id="checkInDay">
+
+                    <!-- Hidden fields for check-out date components -->
+                    <input type="hidden" name="entry.991828552_year" id="checkOutYear">
+                    <input type="hidden" name="entry.991828552_month" id="checkOutMonth">
+                    <input type="hidden" name="entry.991828552_day" id="checkOutDay">
+
                     <!-- Check-in and Check-out Dates (Required) -->
                     <div class="date-grid">
                         <div class="form-group">
                             <label for="checkIn">
                                 Check-In Date <span class="required">*</span>
                             </label>
-                            <input 
-                                type="date" 
-                                id="checkIn" 
-                                name="checkIn" 
-                                required
-                                min=""
-                            >
+                            <input type="date" id="checkIn" required min="">
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="checkOut">
                                 Check-Out Date <span class="required">*</span>
                             </label>
-                            <input 
-                                type="date" 
-                                id="checkOut" 
-                                name="checkOut" 
-                                required
-                                min=""
-                            >
+                            <input type="date" id="checkOut" required min="">
                         </div>
                     </div>
 
@@ -71,12 +74,7 @@
                         <label for="guestName">
                             Full Name
                         </label>
-                        <input 
-                            type="text" 
-                            id="guestName" 
-                            name="guestName" 
-                            placeholder="Enter your full name"
-                        >
+                        <input type="text" id="guestName" name="entry.1212453882" placeholder="Enter your full name">
                     </div>
 
                     <!-- Phone Number (Required) -->
@@ -84,14 +82,8 @@
                         <label for="phone">
                             Phone Number <span class="required">*</span>
                         </label>
-                        <input 
-                            type="tel" 
-                            id="phone" 
-                            name="phone" 
-                            placeholder="Enter your phone number"
-                            pattern="[0-9]{10}"
-                            required
-                        >
+                        <input type="tel" id="phone" name="entry.679896236" placeholder="Enter your phone number"
+                            pattern="[0-9]{10}" required>
                         <small style="color: var(--light-secondary); font-size: 0.85rem;">
                             Please enter a 10-digit phone number
                         </small>
@@ -102,7 +94,7 @@
                         <label for="numRooms">
                             Number of Rooms
                         </label>
-                        <select id="numRooms" name="numRooms">
+                        <select id="numRooms" name="entry.1051948000">
                             <option value="1">1 Room</option>
                             <option value="2">2 Rooms</option>
                             <option value="3">3 Rooms</option>
@@ -153,4 +145,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>
