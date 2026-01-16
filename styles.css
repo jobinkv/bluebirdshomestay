@@ -156,6 +156,22 @@ select {
   transition: var(--transition-base);
 }
 
+.nav-links a.login-link {
+  background: var(--primary-gradient);
+  padding: 8px 18px;
+  border-radius: 10px;
+  color: var(--white);
+  margin-left: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.2);
+}
+
+.nav-links a.login-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+  color: var(--white);
+}
+
 .nav-links a::after {
   content: '';
   position: absolute;

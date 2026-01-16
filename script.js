@@ -138,188 +138,85 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // ========================================
-    // Room Gallery Modal with Multiple Images
+    // Room Data Rendering
     // ========================================
+    const roomsDynamicGrid = document.getElementById('roomsDynamicGrid');
 
-    // Room gallery data - each room has multiple views
-    const roomGalleries = {
-        '101': [
-            {
-                src: '/Users/jobin/.gemini/antigravity/brain/01aaeb87-cc2f-44f6-ad2e-d0b18e64bc98/room_101_main_1768541653997.png',
-                category: 'Room View',
-                alt: 'Room 101 Main View'
-            },
-            {
-                src: 'placeholder-window.jpg',
-                category: 'Window View',
-                alt: 'Room 101 Window View',
-                isPlaceholder: true
-            },
-            {
-                src: 'placeholder-frontage.jpg',
-                category: 'Room Frontage',
-                alt: 'Room 101 Frontage',
-                isPlaceholder: true
-            },
-            {
-                src: 'placeholder-bathroom.jpg',
-                category: 'Bathroom',
-                alt: 'Room 101 Bathroom',
-                isPlaceholder: true
-            }
-        ],
-        '102': [
-            {
-                src: '/Users/jobin/.gemini/antigravity/brain/01aaeb87-cc2f-44f6-ad2e-d0b18e64bc98/room_102_main_1768541671794.png',
-                category: 'Room View',
-                alt: 'Room 102 Main View'
-            },
-            {
-                src: 'placeholder-window.jpg',
-                category: 'Window View',
-                alt: 'Room 102 Window View',
-                isPlaceholder: true
-            },
-            {
-                src: 'placeholder-frontage.jpg',
-                category: 'Room Frontage',
-                alt: 'Room 102 Frontage',
-                isPlaceholder: true
-            },
-            {
-                src: 'placeholder-bathroom.jpg',
-                category: 'Bathroom',
-                alt: 'Room 102 Bathroom',
-                isPlaceholder: true
-            }
-        ],
-        '103': [
-            {
-                src: '/Users/jobin/.gemini/antigravity/brain/01aaeb87-cc2f-44f6-ad2e-d0b18e64bc98/room_103_main_1768541691301.png',
-                category: 'Room View',
-                alt: 'Room 103 Main View'
-            },
-            {
-                src: 'placeholder-window.jpg',
-                category: 'Window View',
-                alt: 'Room 103 Window View',
-                isPlaceholder: true
-            },
-            {
-                src: 'placeholder-frontage.jpg',
-                category: 'Room Frontage',
-                alt: 'Room 103 Frontage',
-                isPlaceholder: true
-            },
-            {
-                src: 'placeholder-bathroom.jpg',
-                category: 'Bathroom',
-                alt: 'Room 103 Bathroom',
-                isPlaceholder: true
-            }
-        ],
-        '104': [
-            {
-                src: '/Users/jobin/.gemini/antigravity/brain/01aaeb87-cc2f-44f6-ad2e-d0b18e64bc98/room_104_main_1768541709309.png',
-                category: 'Room View',
-                alt: 'Room 104 Main View'
-            },
-            {
-                src: 'placeholder-window.jpg',
-                category: 'Window View',
-                alt: 'Room 104 Window View',
-                isPlaceholder: true
-            },
-            {
-                src: 'placeholder-frontage.jpg',
-                category: 'Room Frontage',
-                alt: 'Room 104 Frontage',
-                isPlaceholder: true
-            },
-            {
-                src: 'placeholder-bathroom.jpg',
-                category: 'Bathroom',
-                alt: 'Room 104 Bathroom',
-                isPlaceholder: true
-            }
-        ],
-        '106': [
-            {
-                src: '/Users/jobin/.gemini/antigravity/brain/01aaeb87-cc2f-44f6-ad2e-d0b18e64bc98/room_106_main_1768541726497.png',
-                category: 'Room View',
-                alt: 'Room 106 Main View'
-            },
-            {
-                src: 'placeholder-window.jpg',
-                category: 'Window View',
-                alt: 'Room 106 Window View',
-                isPlaceholder: true
-            },
-            {
-                src: 'placeholder-frontage.jpg',
-                category: 'Room Frontage',
-                alt: 'Room 106 Frontage',
-                isPlaceholder: true
-            },
-            {
-                src: 'placeholder-bathroom.jpg',
-                category: 'Bathroom',
-                alt: 'Room 106 Bathroom',
-                isPlaceholder: true
-            }
-        ],
-        '107': [
-            {
-                src: '/Users/jobin/.gemini/antigravity/brain/01aaeb87-cc2f-44f6-ad2e-d0b18e64bc98/room_107_main_1768541743971.png',
-                category: 'Room View',
-                alt: 'Room 107 Main View'
-            },
-            {
-                src: 'placeholder-window.jpg',
-                category: 'Window View',
-                alt: 'Room 107 Window View',
-                isPlaceholder: true
-            },
-            {
-                src: 'placeholder-frontage.jpg',
-                category: 'Room Frontage',
-                alt: 'Room 107 Frontage',
-                isPlaceholder: true
-            },
-            {
-                src: 'placeholder-bathroom.jpg',
-                category: 'Bathroom',
-                alt: 'Room 107 Bathroom',
-                isPlaceholder: true
-            }
-        ],
-        '108': [
-            {
-                src: 'placeholder-dormitory.jpg',
-                category: 'Dormitory View',
-                alt: 'Room 108 Dormitory',
-                isPlaceholder: true
-            },
-            {
-                src: 'placeholder-window.jpg',
-                category: 'Window View',
-                alt: 'Room 108 Window View',
-                isPlaceholder: true
-            },
-            {
-                src: 'placeholder-frontage.jpg',
-                category: 'Room Frontage',
-                alt: 'Room 108 Frontage',
-                isPlaceholder: true
-            },
-            {
-                src: 'placeholder-bathroom.jpg',
-                category: 'Shared Bathroom',
-                alt: 'Room 108 Bathroom',
-                isPlaceholder: true
-            }
-        ]
-    };
+    function renderRoomGrid() {
+        if (!roomsDynamicGrid || typeof roomManager === 'undefined') return;
+
+        const rooms = roomManager.getAllRooms();
+        roomsDynamicGrid.innerHTML = '';
+
+        Object.keys(rooms).forEach(id => {
+            const room = rooms[id];
+            const card = document.createElement('div');
+            card.className = 'room-card';
+            card.setAttribute('data-room', id);
+            card.innerHTML = `
+                <div class="room-image">
+                    ${room.images[0].src && !room.images[0].src.includes('placeholder') ?
+                    `<img src="${room.images[0].src}" alt="${room.name}">` :
+                    `<div style="width: 100%; height: 280px; background: var(--gradient-dark); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 1rem;">
+                            <span style="font-size: 3rem;">🛏️</span>
+                            <span style="font-weight: 600;">${room.name}</span>
+                            <span style="font-size: 0.9rem; color: var(--light-secondary);">Image Coming Soon</span>
+                        </div>`
+                }
+                    <div class="room-number">Room ${id}</div>
+                </div>
+                <div class="room-details">
+                    <h3 class="room-name">${room.name}</h3>
+                    <div class="room-dimensions">
+                        <div class="dimension-item">
+                            <span class="dimension-label">Room Size</span>
+                            <span class="dimension-value">${room.size}</span>
+                        </div>
+                        <div class="dimension-item">
+                            <span class="dimension-label">Bed Size</span>
+                            <span class="dimension-value">${room.bedSize}</span>
+                        </div>
+                    </div>
+                    <div class="amenities">
+                        ${room.amenities.map(item => `
+                            <div class="amenity-item">
+                                <span class="amenity-icon">${getAmenityIcon(item)}</span>
+                                <span>${item}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="room-price">
+                        <div class="price-label">Room Rate</div>
+                        <div class="price-amount">₹${room.price}<span class="price-period">/day</span></div>
+                    </div>
+                </div>
+            `;
+
+            // Add click listener for gallery
+            card.addEventListener('click', () => openGallery(id));
+            roomsDynamicGrid.appendChild(card);
+        });
+    }
+
+    function getAmenityIcon(amenity) {
+        const icons = {
+            'Air Conditioning': '❄️',
+            'King Size Bed': '🛏️',
+            'Private Bathroom': '🚿',
+            'Hot Water': '💧',
+            '64" Smart TV': '📺',
+            'Music System': '🎵',
+            'Multiple Beds': '🛏️',
+            'Shared Bathroom': '🚿'
+        };
+        return icons[amenity] || '✨';
+    }
+
+    renderRoomGrid();
+
+    // ========================================
+    // Room Gallery Modal with Dynamic Data
+    // ========================================
 
     const galleryModal = document.getElementById('galleryModal');
     const galleryImage = document.getElementById('galleryImage');
@@ -348,7 +245,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function openGallery(roomNumber) {
         currentRoom = roomNumber;
-        currentGallery = roomGalleries[roomNumber] || [];
+        const rooms = roomManager.getAllRooms();
+        currentGallery = rooms[roomNumber]?.images || [];
         currentImageIndex = 0;
 
         if (currentGallery.length > 0) {

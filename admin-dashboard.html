@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Bluebirds Homestay</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .admin-dashboard {
+            padding: var(--spacing-xl) var(--spacing-lg);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .dashboard-header h1 {
+            color: var(--white);
+        }
+
+        .logout-btn {
+            padding: 8px 16px;
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 71, 87, 0.3);
+        }
+
+        .room-manager-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .room-edit-card {
+            background: var(--bg-glass);
+            padding: var(--spacing-lg);
+            border-radius: 15px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .room-edit-card h3 {
+            color: var(--accent-light);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .edit-form-group {
+            margin-bottom: 15px;
+        }
+
+        .edit-form-group label {
+            display: block;
+            color: var(--light-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+
+        .edit-form-group input {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-gradient);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .save-btn:hover {
+            opacity: 0.9;
+        }
+
+        .image-preview-admin {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: #111;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2ed573;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            display: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Security Check -->
+    <script>
+        if (!sessionStorage.getItem('bluebirds_admin')) {
+            window.location.href = 'admin.html';
+        }
+    </script>
+
+    <div class="admin-dashboard">
+        <header class="dashboard-header">
+            <div>
+                <h1>Bluebirds Admin Dashboard</h1>
+                <p style="color: var(--light-secondary)">Manage your rooms and gallery images</p>
+            </div>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </header>
+
+        <div id="roomContainer" class="room-manager-grid">
+            <!-- Room cards will be injected here -->
+        </div>
+    </div>
+
+    <div id="toast" class="toast">Changes saved successfully!</div>
+
+    <script src="rooms-data.js"></script>
+    <script>
+        function logout() {
+            sessionStorage.removeItem('bluebirds_admin');
+            window.location.href = 'admin.html';
+        }
+
+        const container = document.getElementById('roomContainer');
+        const rooms = roomManager.getAllRooms();
+
+        function renderDashboard() {
+            container.innerHTML = '';
+            Object.keys(rooms).forEach(id => {
+                const room = rooms[id];
+                const card = document.createElement('div');
+                card.className = 'room-edit-card';
+                card.innerHTML = `
+                    <h3>Room ${id}</h3>
+                    <img src="${room.images[0].src}" class="image-preview-admin" id="preview-${id}">
+                    <form onsubmit="saveRoom(event, '${id}')">
+                        <div class="edit-form-group">
+                            <label>Room Name</label>
+                            <input type="text" name="name" value="${room.name}" required>
+                        </div>
+                        <div class="edit-form-group">
+                            <label>Price per day (₹)</label>
+                            <input type="number" name="price" value="${room.price}" required>
+                        </div>
+                        <div class="edit-form-group">
+                            <label>Main Image URL or Google Drive Link</label>
+                            <input type="text" name="image" value="${room.images[0].src}" 
+                                   onchange="updatePreview(this, 'preview-${id}')"
+                                   placeholder="Paste link here...">
+                        </div>
+                        <div class="edit-form-group">
+                            <label>Window View Image (Link)</label>
+                            <input type="text" name="windowImage" value="${room.images[1]?.src || ''}">
+                        </div>
+                        <button type="submit" class="save-btn">Save Changes</button>
+                    </form>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function updatePreview(input, previewId) {
+            const val = input.value;
+            const converted = RoomManager.convertGDriveLink(val);
+            document.getElementById(previewId).src = converted;
+        }
+
+        function saveRoom(e, id) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const mainImg = RoomManager.convertGDriveLink(formData.get('image'));
+            const windowImg = RoomManager.convertGDriveLink(formData.get('windowImage'));
+
+            const updatedData = {
+                name: formData.get('name'),
+                price: formData.get('price'),
+                images: JSON.parse(JSON.stringify(rooms[id].images)) // Clone
+            };
+
+            updatedData.images[0].src = mainImg;
+            if (updatedData.images[1]) updatedData.images[1].src = windowImg;
+
+            roomManager.updateRoom(id, updatedData);
+
+            const toast = document.getElementById('toast');
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+
+        renderDashboard();
+    </script>
+</body>
+
+</html>

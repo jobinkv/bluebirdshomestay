@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Bluebirds Homestay</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .login-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-dark);
+            padding: var(--spacing-lg);
+        }
+
+        .login-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            padding: var(--spacing-xl);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            width: 100%;
+            max-width: 400px;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .login-header h1 {
+            font-size: 1.8rem;
+            color: var(--white);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .login-header p {
+            color: var(--light-secondary);
+        }
+    </style>
+</head>
+
+<body>
+    <section class="login-section">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>Admin Portal</h1>
+                <p>Welcome back, Jephyn</p>
+            </div>
+            <form id="loginForm" class="booking-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required placeholder="Enter password">
+                </div>
+                <button type="submit" class="submit-button" style="margin-top: 20px;">Login to Dashboard</button>
+                <div id="loginError"
+                    style="color: #ff4757; text-align: center; margin-top: 15px; display: none; font-size: 0.9rem;">
+                    Invalid username or password
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const error = document.getElementById('loginError');
+
+            if (user === 'jephyn' && pass === 'mattio@24') {
+                sessionStorage.setItem('bluebirds_admin', 'true');
+                window.location.href = 'admin-dashboard.html';
+            } else {
+                error.style.display = 'block';
+                setTimeout(() => { error.style.display = 'none'; }, 3000);
+            }
+        });
+    </script>
+</body>
+
+</html>
