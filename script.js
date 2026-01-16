@@ -146,17 +146,26 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!roomsDynamicGrid || typeof roomManager === 'undefined') return;
 
         const rooms = roomManager.getAllRooms();
-        roomsDynamicGrid.innerHTML = '';
+        if (!rooms || Object.keys(rooms).length === 0) {
+            roomsDynamicGrid.innerHTML = '<p class="text-center" style="color: var(--light-secondary); grid-column: 1/-1;">No room data found. Please sync from Admin Dashboard.</p>';
+            return;
+        }
 
+        roomsDynamicGrid.innerHTML = '';
         Object.keys(rooms).forEach(id => {
             const room = rooms[id];
             const card = document.createElement('div');
             card.className = 'room-card';
             card.setAttribute('data-room', id);
+
+            // ... (rest of the innerHTML remains same as before) ...
+            const mainImg = room.images?.[0]?.src || '';
+            const hasRealImage = mainImg && !mainImg.includes('placeholder');
+
             card.innerHTML = `
                 <div class="room-image">
-                    ${room.images[0].src && !room.images[0].src.includes('placeholder') ?
-                    `<img src="${room.images[0].src}" alt="${room.name}">` :
+                    ${hasRealImage ?
+                    `<img src="${mainImg}" alt="${room.name}">` :
                     `<div style="width: 100%; height: 280px; background: var(--gradient-dark); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 1rem;">
                             <span style="font-size: 3rem;">🛏️</span>
                             <span style="font-weight: 600;">${room.name}</span>
@@ -178,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>
                     </div>
                     <div class="amenities">
-                        ${room.amenities.map(item => `
+                        ${(room.amenities || []).map(item => `
                             <div class="amenity-item">
                                 <span class="amenity-icon">${getAmenityIcon(item)}</span>
                                 <span>${item}</span>
@@ -212,7 +221,27 @@ document.addEventListener('DOMContentLoaded', function () {
         return icons[amenity] || '✨';
     }
 
-    renderRoomGrid();
+    async function initRoomGrid() {
+        if (!roomsDynamicGrid) return;
+        
+        // Show loading state
+        roomsDynamicGrid.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 4rem 0;">
+                <div class="sync-loader" style="width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--accent-light); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem;"></div>
+                <p style="color: var(--light-secondary);">Refreshing latest room details...</p>
+            </div>
+            <style>
+                @keyframes spin { to { transform: rotate(360deg); } }
+            </style>
+        `;
+
+        if (typeof roomManager !== 'undefined') {
+            await roomManager.init();
+            renderRoomGrid();
+        }
+    }
+
+    initRoomGrid();
 
     // ========================================
     // Room Gallery Modal with Dynamic Data
