@@ -40,7 +40,7 @@
 
             <form class="booking-form" id="bookingForm"
                 action="https://docs.google.com/forms/d/e/1FAIpQLSdXZjBhBQLrwtlCI2nx5d5cRaE5P4gCTh7uFTC__nQE5CA2Vw/formResponse"
-                method="POST" target="_blank">
+                method="POST" target="hidden_iframe">
                 <div class="form-grid">
                     <!-- Hidden fields for check-in date components -->
                     <input type="hidden" name="entry.352905302_year" id="checkInYear">
@@ -142,6 +142,9 @@
             <p style="margin-top: 1.5rem; font-size: 0.9rem;">Thanks!</p>
         </div>
     </div>
+
+    <!-- Hidden iframe to handle Google Forms redirect -->
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
 
     <script src="script.js"></script>
 </body>

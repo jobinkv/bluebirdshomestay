@@ -97,8 +97,15 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('checkOutMonth').value = checkOutDate.getMonth() + 1;
             document.getElementById('checkOutDay').value = checkOutDate.getDate();
 
-            // Form will now submit to Google Forms automatically
-            // No need to prevent default or show modal
+            // Show success modal and reset form after a short delay
+            // (The delay ensures the form starts submitting before the fields are cleared)
+            setTimeout(() => {
+                if (successModal) {
+                    successModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+                bookingForm.reset();
+            }, 500);
         });
     }
 
