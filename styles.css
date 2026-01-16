@@ -2,8 +2,6 @@
    Bluebirds Homestay - Premium Design System
    ======================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap');
-
 /* ========================================
    CSS Variables
    ======================================== */
@@ -15,7 +13,7 @@
   --primary-dark: #1e3a8a;
   --accent: #d97706;
   --accent-light: #f59e0b;
-  
+
   /* Neutrals */
   --dark: #0f172a;
   --dark-secondary: #1e293b;
@@ -23,14 +21,14 @@
   --light: #f8fafc;
   --light-secondary: #e2e8f0;
   --white: #ffffff;
-  
+
   /* Gradients */
   --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --gradient-warm: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   --gradient-cool: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
   --gradient-dark: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   --gradient-overlay: linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(15, 23, 42, 0.9) 100%);
-  
+
   /* Spacing */
   --spacing-xs: 0.5rem;
   --spacing-sm: 1rem;
@@ -38,23 +36,23 @@
   --spacing-lg: 2rem;
   --spacing-xl: 3rem;
   --spacing-2xl: 4rem;
-  
-  /* Typography */
-  --font-body: 'Inter', sans-serif;
-  --font-display: 'Playfair Display', serif;
-  
+
+  /* Typography - Booking.com Font Stack */
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
   /* Borders */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 24px;
-  
+
   /* Shadows */
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
   --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.2);
-  
+
   /* Transitions */
   --transition-fast: 200ms ease;
   --transition-base: 300ms ease;
@@ -102,7 +100,9 @@ button {
   outline: none;
 }
 
-input, textarea, select {
+input,
+textarea,
+select {
   font-family: inherit;
   border: none;
   outline: none;
@@ -207,13 +207,20 @@ input, textarea, select {
   right: 0;
   bottom: 0;
   background: radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
-              radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.15) 0%, transparent 50%);
+    radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.15) 0%, transparent 50%);
   animation: pulse 8s ease-in-out infinite;
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
 }
 
 .hero-content {
@@ -248,6 +255,7 @@ input, textarea, select {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -410,8 +418,13 @@ input, textarea, select {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .modal-content {
@@ -431,6 +444,7 @@ input, textarea, select {
     opacity: 0;
     transform: translateY(-30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -569,7 +583,36 @@ input, textarea, select {
 .room-name {
   font-family: var(--font-display);
   font-size: 1.5rem;
+  margin-bottom: var(--spacing-sm);
+  color: var(--white);
+}
+
+.room-dimensions {
+  display: flex;
+  gap: var(--spacing-md);
   margin-bottom: var(--spacing-md);
+  padding: var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid rgba(79, 172, 254, 0.5);
+}
+
+.dimension-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.dimension-label {
+  font-size: 0.75rem;
+  color: var(--light-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dimension-value {
+  font-size: 1rem;
+  font-weight: 600;
   color: var(--white);
 }
 
@@ -589,6 +632,34 @@ input, textarea, select {
 
 .amenity-icon {
   color: var(--accent-light);
+}
+
+.room-price {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--gradient-cool);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.price-label {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  margin-bottom: var(--spacing-xs);
+}
+
+.price-amount {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--white);
+  font-family: var(--font-display);
+}
+
+.price-period {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 400;
 }
 
 /* ========================================
@@ -619,16 +690,129 @@ input, textarea, select {
   position: relative;
 }
 
+.gallery-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.gallery-title {
+  color: var(--white);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.gallery-counter {
+  color: var(--light-secondary);
+  font-size: 1rem;
+}
+
+.gallery-image-container {
+  position: relative;
+  width: 100%;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+}
+
 .gallery-image {
   width: 100%;
   height: auto;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-xl);
+  max-height: 70vh;
+  object-fit: contain;
+  display: block;
+  background: var(--dark);
+}
+
+.gallery-category {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  padding: var(--spacing-md) var(--spacing-lg);
+  color: var(--white);
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.gallery-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  color: var(--white);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: var(--transition-base);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.gallery-nav:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.gallery-nav.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.gallery-prev {
+  left: -70px;
+}
+
+.gallery-next {
+  right: -70px;
+}
+
+.gallery-thumbnails {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+  overflow-x: auto;
+  padding: var(--spacing-sm) 0;
+}
+
+.gallery-thumb {
+  flex-shrink: 0;
+  width: 80px;
+  height: 60px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: var(--transition-base);
+  border: 2px solid transparent;
+}
+
+.gallery-thumb:hover {
+  opacity: 0.8;
+}
+
+.gallery-thumb.active {
+  opacity: 1;
+  border-color: var(--primary-light);
+}
+
+.gallery-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .gallery-close {
   position: absolute;
-  top: -50px;
+  top: -60px;
   right: 0;
   background: rgba(255, 255, 255, 0.2);
   color: var(--white);
@@ -689,7 +873,7 @@ input, textarea, select {
   .menu-toggle {
     display: block;
   }
-  
+
   .nav-links {
     display: none;
     position: absolute;
@@ -702,23 +886,53 @@ input, textarea, select {
     padding: var(--spacing-lg);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
   }
-  
+
   .nav-links.active {
     display: flex;
   }
-  
+
+  /* MOBILE FIX: Prevent form overflow */
+  .booking-section {
+    padding: var(--spacing-lg) var(--spacing-sm);
+  }
+
+  .booking-form {
+    padding: var(--spacing-lg) var(--spacing-md);
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .form-grid {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .form-group {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 16px;
+  }
+
   .date-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .rooms-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .hero-content {
     padding: var(--spacing-lg);
   }
-  
+
   .booking-form {
     padding: var(--spacing-lg);
   }
@@ -728,11 +942,11 @@ input, textarea, select {
   .hero h1 {
     font-size: 2rem;
   }
-  
+
   .section-title {
     font-size: 1.75rem;
   }
-  
+
   .amenities {
     grid-template-columns: 1fr;
   }
@@ -746,12 +960,34 @@ input, textarea, select {
   text-align: center;
 }
 
-.mt-1 { margin-top: var(--spacing-sm); }
-.mt-2 { margin-top: var(--spacing-md); }
-.mt-3 { margin-top: var(--spacing-lg); }
-.mt-4 { margin-top: var(--spacing-xl); }
+.mt-1 {
+  margin-top: var(--spacing-sm);
+}
 
-.mb-1 { margin-bottom: var(--spacing-sm); }
-.mb-2 { margin-bottom: var(--spacing-md); }
-.mb-3 { margin-bottom: var(--spacing-lg); }
-.mb-4 { margin-bottom: var(--spacing-xl); }
+.mt-2 {
+  margin-top: var(--spacing-md);
+}
+
+.mt-3 {
+  margin-top: var(--spacing-lg);
+}
+
+.mt-4 {
+  margin-top: var(--spacing-xl);
+}
+
+.mb-1 {
+  margin-bottom: var(--spacing-sm);
+}
+
+.mb-2 {
+  margin-bottom: var(--spacing-md);
+}
+
+.mb-3 {
+  margin-bottom: var(--spacing-lg);
+}
+
+.mb-4 {
+  margin-bottom: var(--spacing-xl);
+}
