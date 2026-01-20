@@ -107,23 +107,44 @@ class RoomManager {
     }
 
     async init() {
+        console.group('RoomManager Initialization');
         if (!localStorage.getItem(this.configKey)) {
-            localStorage.setItem(this.configKey, JSON.stringify({ 
-                sheetUrl: DEFAULT_SHEET_URL, 
-                lastSync: null 
+            localStorage.setItem(this.configKey, JSON.stringify({
+                sheetUrl: DEFAULT_SHEET_URL,
+                lastSync: null
             }));
         }
 
         if (!localStorage.getItem(this.storageKey)) {
             localStorage.setItem(this.storageKey, JSON.stringify(DEFAULT_ROOMS));
+        } else {
+            // Aggressive Migration: Ensure ALL rooms have size/bedSize
+            const rooms = this.getAllRooms();
+            let changed = false;
+            Object.keys(rooms).forEach(id => {
+                const defaultRoom = DEFAULT_ROOMS[id] || Object.values(DEFAULT_ROOMS)[0];
+                if (!rooms[id].size || rooms[id].size.trim() === '' || !/\d/.test(rooms[id].size)) {
+                    rooms[id].size = defaultRoom.size; changed = true;
+                }
+                if (!rooms[id].bedSize || rooms[id].bedSize.trim() === '' || !/\d/.test(rooms[id].bedSize)) {
+                    rooms[id].bedSize = defaultRoom.bedSize; changed = true;
+                }
+            });
+            if (changed) {
+                console.log('Fixed room data in localStorage.');
+                localStorage.setItem(this.storageKey, JSON.stringify(rooms));
+            }
         }
 
-        // Always sync on load if a sheet URL is configured
         const config = this.getConfig();
         if (config.sheetUrl) {
-            console.log('Refreshing data from Google Sheet...');
-            return await this.syncWithSheet();
+            console.log('Syncing starting...');
+            const result = await this.syncWithSheet();
+            console.log('Sync result:', result);
+            console.groupEnd();
+            return result;
         }
+        console.groupEnd();
         return { success: true };
     }
 
@@ -152,96 +173,130 @@ class RoomManager {
         const config = this.getConfig();
         if (!config.sheetUrl) return { success: false, message: 'No Google Sheet URL provided' };
 
-        // Controller for fetch timeout
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
 
         try {
             const response = await fetch(config.sheetUrl, { signal: controller.signal });
             clearTimeout(timeoutId);
-            
-            const csvText = await response.text();
+
+            let csvText = await response.text();
+            // STRIP UTF-8 BOM if present
+            if (csvText.charCodeAt(0) === 0xFEFF) {
+                csvText = csvText.substring(1);
+            }
+
             const rooms = this.parseCSV(csvText);
-            
+
             if (Object.keys(rooms).length > 0) {
                 localStorage.setItem(this.storageKey, JSON.stringify(rooms));
                 this.updateConfig({ lastSync: new Date().toISOString() });
                 return { success: true, message: 'Sync successful!' };
             }
-            return { success: false, message: 'No valid data found in sheet. Check your column headers.' };
+            return { success: false, message: 'No valid data found. Check your column headers (ID, Name, Size, BedSize).' };
         } catch (error) {
             clearTimeout(timeoutId);
             console.error('Sync failed:', error);
-            
-            if (error.name === 'AbortError') {
-                return { success: false, message: 'Sync timed out. Check your internet connection.' };
-            }
-
-            // Detection for CORS blocks (common when running from file://)
-            if (window.location.protocol === 'file:') {
-                return { 
-                    success: false, 
-                    message: 'CORS Blocked: Google Sheets sync only works when running on a local server (e.g., http://localhost:8000). Please check implementation_plan.md for instructions.' 
-                };
-            }
-
             return { success: false, message: 'Fetch failed. Ensure your spreadsheet is "Published to web" as CSV.' };
         }
     }
 
     parseCSV(csvText) {
-        // Handle various newline formats and filter empty lines
         const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
         if (lines.length < 2) return {};
 
-        // Helper to find column index regardless of case/whitespace
-        const findColumn = (headers, names) => {
-            const searchNames = names.map(n => n.toLowerCase());
-            return headers.findIndex(h => searchNames.includes(h.trim().toLowerCase()));
+        const headers = this.splitCSVLine(lines[0]);
+
+        // Smart Column Finding
+        const findColumn = (headers, synonyms) => {
+            const lowerHeaders = headers.map(h => h.trim().toLowerCase());
+            // 1. Try exact matches first
+            for (let syn of synonyms) {
+                const idx = lowerHeaders.indexOf(syn.toLowerCase());
+                if (idx !== -1) return idx;
+            }
+            // 2. Try fuzzy (contains)
+            for (let i = 0; i < lowerHeaders.length; i++) {
+                for (let syn of synonyms) {
+                    if (lowerHeaders[i].includes(syn.toLowerCase())) return i;
+                }
+            }
+            return -1;
         };
 
-        const headers = lines[0].split(',').map(h => h.trim());
-        const rooms = {};
-
-        // Find critical column indices
         const idx = {
-            id: findColumn(headers, ['ID', 'Room ID', 'RoomID']),
-            name: findColumn(headers, ['Name', 'Room Name', 'RoomName']),
-            size: findColumn(headers, ['Size', 'Room Size', 'Dimensions']),
-            bed: findColumn(headers, ['BedSize', 'Bed Size', 'Bed']),
-            price: findColumn(headers, ['Price', 'Rate', 'Room Rate']),
-            imgMain: findColumn(headers, ['MainImage', 'Image 1', 'Main Image']),
-            imgWindow: findColumn(headers, ['WindowImage', 'Image 2', 'Window Image']),
+            id: findColumn(headers, ['ID', 'Room Number', 'RoomID', 'Room No']),
+            name: findColumn(headers, ['Name', 'Room Name', 'Title', 'Type']),
+            size: findColumn(headers, ['Size', 'Dimension', 'Area', 'Sqft']),
+            bed: findColumn(headers, ['Bed', 'BedSize', 'Bed Size']),
+            price: findColumn(headers, ['Price', 'Rate', 'Rent']),
+            imgMain: findColumn(headers, ['MainImage', 'Image1', 'Photo1']),
+            imgWindow: findColumn(headers, ['WindowImage', 'Image2', 'Photo2']),
             amenities: findColumn(headers, ['Amenities', 'Features', 'Facility'])
         };
 
-        // If we can't find ID or Name, we can't reliably parse
-        if (idx.id === -1 || idx.name === -1) {
-            console.warn('CSV parsing failed: Could not find ID or Name columns.', headers);
-            return {};
+        // Safety: ensure ID and Name aren't mistakenly swapped
+        if (idx.id !== -1 && idx.id === idx.name) {
+            const otherName = headers.findIndex((h, i) => i !== idx.id && (h.toLowerCase().includes('name') || h.toLowerCase().includes('title')));
+            if (otherName !== -1) idx.name = otherName;
         }
 
+        if (idx.id === -1) return {};
+
+        const rooms = {};
         for (let i = 1; i < lines.length; i++) {
-            // Robust CSV splitting (handles quoted values with commas)
-            const values = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || lines[i].split(',');
-            const getVal = (idx) => (idx !== -1 && values[idx]) ? values[idx].replace(/^"|"$/g, '').trim() : '';
+            const values = this.splitCSVLine(lines[i]);
+            const getVal = (cIdx) => (cIdx !== -1 && values[cIdx]) ? values[cIdx].replace(/^"|"$/g, '').trim() : '';
 
             const roomId = getVal(idx.id);
             if (roomId) {
+                const roomRawSize = getVal(idx.size);
+                const roomRawBed = getVal(idx.bed);
+
+                // VALIDATION: Must contain at least one number to be valid dimension
+                const hasDigit = (str) => typeof str === 'string' && /\d/.test(str);
+                
+                const finalSize = hasDigit(roomRawSize) ? roomRawSize : (DEFAULT_ROOMS[roomId]?.size || '14 × 16 ft');
+                const finalBed = hasDigit(roomRawBed) ? roomRawBed : (DEFAULT_ROOMS[roomId]?.bedSize || '6 × 7 ft');
+
                 rooms[roomId] = {
                     name: getVal(idx.name) || `Room ${roomId}`,
-                    size: getVal(idx.size) || 'N/A',
-                    bedSize: getVal(idx.bed) || 'N/A',
-                    price: getVal(idx.price) || '0',
+                    size: finalSize,
+                    bedSize: finalBed,
+                    price: getVal(idx.price) || (DEFAULT_ROOMS[roomId]?.price || '2000'),
                     images: [
                         { src: RoomManager.convertGDriveLink(getVal(idx.imgMain)), category: 'Room View' },
                         { src: RoomManager.convertGDriveLink(getVal(idx.imgWindow)), category: 'Window View' }
                     ],
-                    amenities: getVal(idx.amenities) ? getVal(idx.amenities).split(/[|;,]/).map(a => a.trim()) : []
+                    amenities: getVal(idx.amenities) ? getVal(idx.amenities).split(/[|;,]/).map(a => a.trim()) : (DEFAULT_ROOMS[roomId]?.amenities || [])
                 };
             }
         }
         return rooms;
+    }
+
+    /**
+     * Robust CSV line splitter that handles quotes and commas
+     */
+    splitCSVLine(line) {
+        const result = [];
+        let cur = "";
+        let inQuote = false;
+
+        for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+
+            if (char === '"') {
+                inQuote = !inQuote;
+            } else if (char === ',' && !inQuote) {
+                result.push(cur.trim());
+                cur = "";
+            } else {
+                cur += char;
+            }
+        }
+        result.push(cur.trim());
+        return result;
     }
 
     /**

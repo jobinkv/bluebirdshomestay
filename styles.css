@@ -594,6 +594,10 @@ select {
 
 .room-details {
   padding: var(--spacing-lg);
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .room-name {

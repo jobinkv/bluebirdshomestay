@@ -1,0 +1,5 @@
+ID,Name,Size,BedSize,Price,MainImage,WindowImage,Amenities
+101,Deluxe Room 101,14 × 16 ft,6 × 7 ft,2000,https://example.com/room101.jpg,https://example.com/window101.jpg,"Air Conditioning | King Size Bed | Private Bathroom | Hot Water | 64"" Smart TV | Music System"
+102,Deluxe Room 102,14 × 16 ft,6 × 7 ft,2000,https://example.com/room102.jpg,https://example.com/window102.jpg,"Air Conditioning | King Size Bed | Private Bathroom | Hot Water | 64"" Smart TV | Music System"
+103,Deluxe Room 103,14 × 16 ft,6 × 7 ft,2000,https://example.com/room103.jpg,https://example.com/window103.jpg,"Air Conditioning | King Size Bed | Private Bathroom | Hot Water | 64"" Smart TV | Music System"
+108,Room 108 - Dormitory,20 × 24 ft,3 × 6 ft (each),2000,https://example.com/dormitory.jpg,https://example.com/window108.jpg,"Air Conditioning | Multiple Beds | Shared Bathroom | Hot Water | 64"" Smart TV | Music System"

@@ -155,10 +155,8 @@ document.addEventListener('DOMContentLoaded', function () {
         Object.keys(rooms).forEach(id => {
             const room = rooms[id];
             const card = document.createElement('div');
-            card.className = 'room-card';
-            card.setAttribute('data-room', id);
-
-            // ... (rest of the innerHTML remains same as before) ...
+            console.log(`Rendering Room Card ${id}:`, { size: room.size, bedSize: room.bedSize });
+            
             const mainImg = room.images?.[0]?.src || '';
             const hasRealImage = mainImg && !mainImg.includes('placeholder');
 
@@ -169,23 +167,24 @@ document.addEventListener('DOMContentLoaded', function () {
                     `<div style="width: 100%; height: 280px; background: var(--gradient-dark); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 1rem;">
                             <span style="font-size: 3rem;">🛏️</span>
                             <span style="font-weight: 600;">${room.name}</span>
-                            <span style="font-size: 0.9rem; color: var(--light-secondary);">Image Coming Soon</span>
                         </div>`
                 }
                     <div class="room-number">Room ${id}</div>
                 </div>
                 <div class="room-details">
                     <h3 class="room-name">${room.name}</h3>
-                    <div class="room-dimensions">
+                    
+                    <div class="room-dimensions" style="display: flex !important; visibility: visible !important; opacity: 1 !important; background: rgba(0,0,0,0.2) !important; padding: 10px !important; border-radius: 8px !important;">
                         <div class="dimension-item">
-                            <span class="dimension-label">Room Size</span>
-                            <span class="dimension-value">${room.size}</span>
+                            <span class="dimension-label" style="font-size: 0.7rem !important; color: #aaa !important;">ROOM SIZE</span>
+                            <span class="dimension-value" style="display: block !important; font-size: 1.1rem !important; color: #fff !important; font-weight: bold !important;">${room.size || '14 × 16 ft'}</span>
                         </div>
                         <div class="dimension-item">
-                            <span class="dimension-label">Bed Size</span>
-                            <span class="dimension-value">${room.bedSize}</span>
+                            <span class="dimension-label" style="font-size: 0.7rem !important; color: #aaa !important;">BED SIZE</span>
+                            <span class="dimension-value" style="display: block !important; font-size: 1.1rem !important; color: #fff !important; font-weight: bold !important;">${room.bedSize || '6 × 7 ft'}</span>
                         </div>
                     </div>
+
                     <div class="amenities">
                         ${(room.amenities || []).map(item => `
                             <div class="amenity-item">
@@ -223,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function initRoomGrid() {
         if (!roomsDynamicGrid) return;
-        
+
         // Show loading state
         roomsDynamicGrid.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 4rem 0;">

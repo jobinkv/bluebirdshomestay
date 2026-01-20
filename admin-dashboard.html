@@ -190,6 +190,16 @@
                             <label>Room Name</label>
                             <input type="text" name="name" value="${room.name}" required>
                         </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div class="edit-form-group">
+                                <label>Room Size</label>
+                                <input type="text" name="size" value="${room.size || ''}" placeholder="e.g. 14 x 16 ft">
+                            </div>
+                            <div class="edit-form-group">
+                                <label>Bed Size</label>
+                                <input type="text" name="bedSize" value="${room.bedSize || ''}" placeholder="e.g. 6 x 7 ft">
+                            </div>
+                        </div>
                         <div class="edit-form-group">
                             <label>Price per day (₹)</label>
                             <input type="number" name="price" value="${room.price}" required>
@@ -225,6 +235,8 @@
 
             const updatedData = {
                 name: formData.get('name'),
+                size: formData.get('size'),
+                bedSize: formData.get('bedSize'),
                 price: formData.get('price'),
                 images: JSON.parse(JSON.stringify(rooms[id].images)) // Clone
             };
