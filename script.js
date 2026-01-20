@@ -193,9 +193,15 @@ document.addEventListener('DOMContentLoaded', function () {
                             </div>
                         `).join('')}
                     </div>
-                    <div class="room-price">
-                        <div class="price-label">Room Rate</div>
-                        <div class="price-amount">₹${room.price}<span class="price-period">/day</span></div>
+                    <div class="room-price" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 15px !important;">
+                        <div>
+                            <div class="price-label" style="font-size: 0.7rem;">WEEKDAY</div>
+                            <div class="price-amount" style="font-size: 1.3rem;">₹${room.weekdayPrice}</div>
+                        </div>
+                        <div style="border-left: 1px solid rgba(255,255,255,0.2);">
+                            <div class="price-label" style="font-size: 0.7rem;">WEEKEND</div>
+                            <div class="price-amount" style="font-size: 1.3rem;">₹${room.weekendPrice}</div>
+                        </div>
                     </div>
                 </div>
             `;

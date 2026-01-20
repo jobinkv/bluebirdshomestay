@@ -8,7 +8,8 @@ const DEFAULT_ROOMS = {
         name: 'Deluxe Room 101',
         size: '14 × 16 ft',
         bedSize: '6 × 7 ft',
-        price: '2000',
+        weekdayPrice: '2000',
+        weekendPrice: '2500',
         images: [
             { src: '/Users/jobin/.gemini/antigravity/brain/01aaeb87-cc2f-44f6-ad2e-d0b18e64bc98/room_101_main_1768541653997.png', category: 'Room View' },
             { src: 'placeholder-window.jpg', category: 'Window View' },
@@ -21,7 +22,8 @@ const DEFAULT_ROOMS = {
         name: 'Deluxe Room 102',
         size: '14 × 16 ft',
         bedSize: '6 × 7 ft',
-        price: '2000',
+        weekdayPrice: '2000',
+        weekendPrice: '2500',
         images: [
             { src: '/Users/jobin/.gemini/antigravity/brain/01aaeb87-cc2f-44f6-ad2e-d0b18e64bc98/room_102_main_1768541671794.png', category: 'Room View' },
             { src: 'placeholder-window.jpg', category: 'Window View' },
@@ -34,7 +36,8 @@ const DEFAULT_ROOMS = {
         name: 'Deluxe Room 103',
         size: '14 × 16 ft',
         bedSize: '6 × 7 ft',
-        price: '2000',
+        weekdayPrice: '2000',
+        weekendPrice: '2500',
         images: [
             { src: '/Users/jobin/.gemini/antigravity/brain/01aaeb87-cc2f-44f6-ad2e-d0b18e64bc98/room_103_main_1768541691301.png', category: 'Room View' },
             { src: 'placeholder-window.jpg', category: 'Window View' },
@@ -47,7 +50,8 @@ const DEFAULT_ROOMS = {
         name: 'Deluxe Room 104',
         size: '14 × 16 ft',
         bedSize: '6 × 7 ft',
-        price: '2000',
+        weekdayPrice: '2000',
+        weekendPrice: '2500',
         images: [
             { src: '/Users/jobin/.gemini/antigravity/brain/01aaeb87-cc2f-44f6-ad2e-d0b18e64bc98/room_104_main_1768541709309.png', category: 'Room View' },
             { src: 'placeholder-window.jpg', category: 'Window View' },
@@ -60,7 +64,8 @@ const DEFAULT_ROOMS = {
         name: 'Deluxe Room 106',
         size: '14 × 16 ft',
         bedSize: '6 × 7 ft',
-        price: '2000',
+        weekdayPrice: '2000',
+        weekendPrice: '2500',
         images: [
             { src: '/Users/jobin/.gemini/antigravity/brain/01aaeb87-cc2f-44f6-ad2e-d0b18e64bc98/room_106_main_1768541726497.png', category: 'Room View' },
             { src: 'placeholder-window.jpg', category: 'Window View' },
@@ -73,7 +78,8 @@ const DEFAULT_ROOMS = {
         name: 'Deluxe Room 107',
         size: '14 × 16 ft',
         bedSize: '6 × 7 ft',
-        price: '2000',
+        weekdayPrice: '2000',
+        weekendPrice: '2500',
         images: [
             { src: '/Users/jobin/.gemini/antigravity/brain/01aaeb87-cc2f-44f6-ad2e-d0b18e64bc98/room_107_main_1768541743971.png', category: 'Room View' },
             { src: 'placeholder-window.jpg', category: 'Window View' },
@@ -86,7 +92,8 @@ const DEFAULT_ROOMS = {
         name: 'Room 108 - Dormitory',
         size: '20 × 24 ft',
         bedSize: '3 × 6 ft (each)',
-        price: '2000',
+        weekdayPrice: '1500',
+        weekendPrice: '1800',
         images: [
             { src: 'placeholder-dormitory.jpg', category: 'Dormitory View' },
             { src: 'placeholder-window.jpg', category: 'Window View' },
@@ -229,7 +236,8 @@ class RoomManager {
             name: findColumn(headers, ['Name', 'Room Name', 'Title', 'Type']),
             size: findColumn(headers, ['Size', 'Dimension', 'Area', 'Sqft']),
             bed: findColumn(headers, ['Bed', 'BedSize', 'Bed Size']),
-            price: findColumn(headers, ['Price', 'Rate', 'Rent']),
+            weekdayPrice: findColumn(headers, ['WeekdayPrice', 'Weekday Price', 'Mon-Fri Price', 'WeekdayRate']),
+            weekendPrice: findColumn(headers, ['WeekendPrice', 'Weekend Price', 'Sat-Sun Price', 'WeekendRate']),
             imgMain: findColumn(headers, ['MainImage', 'Image1', 'Photo1']),
             imgWindow: findColumn(headers, ['WindowImage', 'Image2', 'Photo2']),
             amenities: findColumn(headers, ['Amenities', 'Features', 'Facility'])
@@ -255,15 +263,19 @@ class RoomManager {
 
                 // VALIDATION: Must contain at least one number to be valid dimension
                 const hasDigit = (str) => typeof str === 'string' && /\d/.test(str);
-                
+
                 const finalSize = hasDigit(roomRawSize) ? roomRawSize : (DEFAULT_ROOMS[roomId]?.size || '14 × 16 ft');
                 const finalBed = hasDigit(roomRawBed) ? roomRawBed : (DEFAULT_ROOMS[roomId]?.bedSize || '6 × 7 ft');
+
+                const weekdayPrice = getVal(idx.weekdayPrice);
+                const weekendPrice = getVal(idx.weekendPrice);
 
                 rooms[roomId] = {
                     name: getVal(idx.name) || `Room ${roomId}`,
                     size: finalSize,
                     bedSize: finalBed,
-                    price: getVal(idx.price) || (DEFAULT_ROOMS[roomId]?.price || '2000'),
+                    weekdayPrice: weekdayPrice || (DEFAULT_ROOMS[roomId]?.weekdayPrice || '2000'),
+                    weekendPrice: weekendPrice || (DEFAULT_ROOMS[roomId]?.weekendPrice || '2500'),
                     images: [
                         { src: RoomManager.convertGDriveLink(getVal(idx.imgMain)), category: 'Room View' },
                         { src: RoomManager.convertGDriveLink(getVal(idx.imgWindow)), category: 'Window View' }

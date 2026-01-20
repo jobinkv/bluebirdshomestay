@@ -200,9 +200,15 @@
                                 <input type="text" name="bedSize" value="${room.bedSize || ''}" placeholder="e.g. 6 x 7 ft">
                             </div>
                         </div>
-                        <div class="edit-form-group">
-                            <label>Price per day (₹)</label>
-                            <input type="number" name="price" value="${room.price}" required>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div class="edit-form-group">
+                                <label>Weekday Rate (₹)</label>
+                                <input type="number" name="weekdayPrice" value="${room.weekdayPrice}" required>
+                            </div>
+                            <div class="edit-form-group">
+                                <label>Weekend Rate (₹)</label>
+                                <input type="number" name="weekendPrice" value="${room.weekendPrice}" required>
+                            </div>
                         </div>
                         <div class="edit-form-group">
                             <label>Main Image URL or Google Drive Link</label>
@@ -237,15 +243,19 @@
                 name: formData.get('name'),
                 size: formData.get('size'),
                 bedSize: formData.get('bedSize'),
-                price: formData.get('price'),
-                images: JSON.parse(JSON.stringify(rooms[id].images)) // Clone
+                weekdayPrice: formData.get('weekdayPrice'),
+                weekendPrice: formData.get('weekendPrice'),
+                images: [
+                    { src: mainImg, category: 'Room View' },
+                    { src: windowImg, category: 'Window View' }
+                ]
             };
-
-            updatedData.images[0].src = mainImg;
-            if (updatedData.images[1]) updatedData.images[1].src = windowImg;
 
             roomManager.updateRoom(id, updatedData);
             showToast('Changes saved successfully!');
+            // Update local rooms object and re-render to show changes
+            rooms[id] = { ...rooms[id], ...updatedData };
+            renderDashboard();
         }
 
         async function handleSync() {
