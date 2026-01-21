@@ -219,7 +219,11 @@
                             <label>Window View Image (Link)</label>
                             <input type="text" name="windowImage" value="${room.images[1]?.src || ''}">
                         </div>
-                        <button type="submit" class="save-btn">Save Changes</button>
+                        <div class="edit-form-group">
+                            <label>Amenities (Comma separated)</label>
+                            <textarea name="amenities" style="width: 100%; padding: 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--white); border-radius: 6px; box-sizing: border-box; min-height: 80px;">${(room.amenities || []).join(', ')}</textarea>
+                        </div>
+                        <button type="submit" class="save-btn" id="save-btn-${id}">Save Changes</button>
                     </form>
                 `;
                 container.appendChild(card);
@@ -234,9 +238,14 @@
 
         async function saveRoom(e, id) {
             e.preventDefault();
-            const formData = new FormData(e.target);
+            const form = e.target;
+            const saveBtn = document.getElementById(`save-btn-${id}`);
+            const formData = new FormData(form);
+            
             const mainImg = RoomManager.convertGDriveLink(formData.get('image'));
             const windowImg = RoomManager.convertGDriveLink(formData.get('windowImage'));
+            const amenitiesRaw = formData.get('amenities');
+            const amenitiesArray = amenitiesRaw ? amenitiesRaw.split(',').map(a => a.trim()).filter(a => a !== '') : [];
 
             const updatedData = {
                 name: formData.get('name'),
@@ -248,17 +257,29 @@
                     { src: mainImg, category: 'Room View' },
                     { src: windowImg, category: 'Window View' }
                 ],
-                amenities: rooms[id]?.amenities || [] // Keep existing amenities
+                amenities: amenitiesArray
             };
 
-            showToast('Saving to Supabase...');
-            const result = await roomManager.updateRoom(id, updatedData);
-            if (result.success) {
-                showToast('Changes saved successfully!');
-                rooms[id] = { ...rooms[id], ...updatedData };
-                renderDashboard();
-            } else {
-                alert('Error saving: ' + (result.message || 'Unknown error'));
+            // UI Feedback
+            saveBtn.disabled = true;
+            saveBtn.textContent = '⌛ Saving...';
+            saveBtn.style.opacity = '0.7';
+
+            try {
+                const result = await roomManager.updateRoom(id, updatedData);
+                if (result.success) {
+                    showToast('Changes saved to Supabase!');
+                    rooms[id] = { ...rooms[id], ...updatedData };
+                    renderDashboard();
+                } else {
+                    throw new Error(result.message || 'Supabase update failed');
+                }
+            } catch (error) {
+                console.error('Save error:', error);
+                alert('Error saving: ' + error.message);
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Changes';
+                saveBtn.style.opacity = '1';
             }
         }
 
