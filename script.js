@@ -85,27 +85,45 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            // Split check-in date into components for Google Forms
-            const checkInDate = new Date(checkIn);
-            document.getElementById('checkInYear').value = checkInDate.getFullYear();
-            document.getElementById('checkInMonth').value = checkInDate.getMonth() + 1; // Months are 0-indexed
-            document.getElementById('checkInDay').value = checkInDate.getDate();
+            // Prevent default form submission to Google Forms
+            e.preventDefault();
 
-            // Split check-out date into components for Google Forms
-            const checkOutDate = new Date(checkOut);
-            document.getElementById('checkOutYear').value = checkOutDate.getFullYear();
-            document.getElementById('checkOutMonth').value = checkOutDate.getMonth() + 1;
-            document.getElementById('checkOutDay').value = checkOutDate.getDate();
+            // Insert into Supabase
+            if (typeof roomManager !== 'undefined' && roomManager.supabase) {
+                const guestName = document.getElementById('guestName').value;
+                const numRooms = document.getElementById('numRooms').value;
 
-            // Show success modal and reset form after a short delay
-            // (The delay ensures the form starts submitting before the fields are cleared)
-            setTimeout(() => {
-                if (successModal) {
-                    successModal.classList.add('active');
-                    document.body.style.overflow = 'hidden';
-                }
-                bookingForm.reset();
-            }, 500);
+                roomManager.supabase
+                    .from('bookings')
+                    .insert({
+                        check_in: checkIn,
+                        check_out: checkOut,
+                        guest_name: guestName,
+                        phone: phone,
+                        num_rooms: numRooms
+                    })
+                    .then(({ data, error }) => {
+                        if (error) {
+                            console.error('Error saving booking:', error);
+                            alert('Sorry, there was an error processing your booking. Please try again or contact us directly.');
+                        } else {
+                            console.log('Booking saved successfully:', data);
+                            // Show success modal and reset form
+                            if (successModal) {
+                                successModal.classList.add('active');
+                                document.body.style.overflow = 'hidden';
+                            }
+                            bookingForm.reset();
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Unexpected error:', err);
+                        alert('An unexpected error occurred. Please try again.');
+                    });
+            } else {
+                console.error('Supabase client not initialized');
+                alert('Booking system is currently unavailable. Please try again later.');
+            }
         });
     }
 
@@ -156,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const room = rooms[id];
             const card = document.createElement('div');
             console.log(`Rendering Room Card ${id}:`, { size: room.size, bedSize: room.bedSize });
-            
+
             const mainImg = room.images?.[0]?.src || '';
             const hasRealImage = mainImg && !mainImg.includes('placeholder');
 
