@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="Book your stay at Bluebirds Homestay - Premium accommodation with modern amenities">
-    <title>Bluebirds Homestay - Book Your Perfect Stay</title>
+        content="Explore our premium rooms at Bluebirds Homestay - All rooms feature AC, king size beds, 64-inch TVs, and more">
+    <title>Our Rooms - Bluebirds Homestay</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -18,87 +18,30 @@
             <button class="menu-toggle" id="menuToggle">☰</button>
             <ul class="nav-links" id="navLinks">
                 <li><a href="index.html">Home</a></li>
-                <li><a href="rooms.html">Rooms</a></li>
-                <li><a href="#booking">Book Now</a></li>
+                <li><a href="booking.html">Book Now</a></li>
+                <!-- <li><a href="rooms.html">Rooms</a></li>
+                <li><a href="index.html#booking">Book Now</a></li> -->
                 <li><a href="admin.html" class="login-link">Login</a></li>
             </ul>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Your Perfect Getaway Awaits</h1>
-            <p>Experience luxury and comfort at Bluebirds Homestay. Premium rooms with world-class amenities.</p>
-            <a href="#booking" class="cta-button">Book Your Stay</a>
-        </div>
-    </section>
-
-    <!-- Booking Form Section -->
-    <section id="booking" class="booking-section">
+    <!-- Rooms Section -->
+    <section class="rooms-section" style="padding-top: 120px;">
         <div class="container">
-            <h2 class="section-title">Reserve Your Room</h2>
+            <h2 class="section-title">Our Premium Rooms</h2>
+            <p class="text-center" style="color: var(--light-secondary); margin-bottom: 2rem; font-size: 1.1rem;">
+                Each room is thoughtfully designed with luxury amenities for your comfort
+            </p>
 
-            <form class="booking-form" id="bookingForm">
-                <div class="form-grid">
+            <div class="rooms-grid" id="roomsDynamicGrid">
+                <!-- Rooms will be dynamically injected here from rooms-data.js -->
+            </div>
 
-                    <!-- Check-in and Check-out Dates (Required) -->
-                    <div class="date-grid">
-                        <div class="form-group">
-                            <label for="checkIn">
-                                Check-In Date <span class="required">*</span>
-                            </label>
-                            <input type="date" id="checkIn" required min="">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="checkOut">
-                                Check-Out Date <span class="required">*</span>
-                            </label>
-                            <input type="date" id="checkOut" required min="">
-                        </div>
-                    </div>
-
-                    <!-- Guest Name (Optional) -->
-                    <div class="form-group">
-                        <label for="guestName">
-                            Full Name
-                        </label>
-                        <input type="text" id="guestName" placeholder="Enter your full name">
-                    </div>
-
-                    <!-- Phone Number (Required) -->
-                    <div class="form-group">
-                        <label for="phone">
-                            Phone Number <span class="required">*</span>
-                        </label>
-                        <input type="tel" id="phone" placeholder="Enter your phone number"
-                            pattern="[0-9]{10}" required>
-                        <small style="color: var(--light-secondary); font-size: 0.85rem;">
-                            Please enter a 10-digit phone number
-                        </small>
-                    </div>
-
-                    <!-- Number of Rooms (Optional) -->
-                    <div class="form-group">
-                        <label for="numRooms">
-                            Number of Rooms
-                        </label>
-                        <select id="numRooms">
-                            <option value="1">1 Room</option>
-                            <option value="2">2 Rooms</option>
-                            <option value="3">3 Rooms</option>
-                            <option value="4">4 Rooms</option>
-                            <option value="5">5+ Rooms</option>
-                        </select>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <button type="submit" class="submit-button">
-                        Complete Booking Request
-                    </button>
-                </div>
-            </form>
+            <!-- Call to Action -->
+            <div class="text-center" style="margin-top: 3rem;">
+                <a href="booking.html" class="cta-button">Book Your Stay Now</a>
+            </div>
         </div>
     </section>
 
@@ -108,8 +51,7 @@
             <p>&copy; 2026 Bluebirds Homestay. All rights reserved.</p>
             <div class="footer-links">
                 <a href="index.html">Home</a>
-                <a href="rooms.html">Rooms</a>
-                <a href="#booking">Book Now</a>
+                <a href="booking.html">Book Now</a>
             </div>
             <p style="margin-top: 1rem; font-size: 0.9rem;">
                 Emergency Contact: <strong style="color: var(--accent-light);">9746282822</strong>
@@ -117,22 +59,28 @@
         </div>
     </footer>
 
-    <!-- Success Modal -->
-    <div class="modal" id="successModal">
-        <div class="modal-content">
-            <button class="modal-close" id="modalClose">&times;</button>
-            <div class="modal-icon">✓</div>
-            <h2>Thank You!</h2>
-            <p>Thanks for your interest in Bluebirds Homestay.</p>
-            <p>Our sales team will contact you for confirmation within 2 days.</p>
-            <div class="emergency-contact">
-                <p>In case of emergency, please call:</p>
-                <p><strong>9746282822</strong></p>
+    <!-- Gallery Modal -->
+    <div class="gallery-modal" id="galleryModal">
+        <div class="gallery-content">
+            <div class="gallery-header">
+                <div class="gallery-title" id="galleryRoomTitle">Room Gallery</div>
+                <div class="gallery-counter" id="galleryCounter">1 / 4</div>
             </div>
-            <p style="margin-top: 1.5rem; font-size: 0.9rem;">Thanks!</p>
+            <button class="gallery-close" id="galleryClose">&times;</button>
+
+            <div class="gallery-image-container">
+                <img src="" alt="Room Gallery" class="gallery-image" id="galleryImage">
+                <div class="gallery-category" id="galleryCategory">Room View</div>
+
+                <button class="gallery-nav gallery-prev" id="galleryPrev">‹</button>
+                <button class="gallery-nav gallery-next" id="galleryNext">›</button>
+            </div>
+
+            <div class="gallery-thumbnails" id="galleryThumbnails">
+                <!-- Thumbnails will be populated by JavaScript -->
+            </div>
         </div>
     </div>
-
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="rooms-data.js"></script>
