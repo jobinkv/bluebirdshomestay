@@ -104,211 +104,147 @@ const DEFAULT_ROOMS = {
     }
 };
 
-const DEFAULT_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1lR9D4qdyieDuBF96fk-aL1rmDpQUzTfTx2zPxFPK4kQ/export?format=csv';
+const SUPABASE_URL = 'https://mvxnvgxyxdpjqwhcrpkv.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_HEVYqUjtBfjAEQf-BjWy9w_2yTUQzT9';
+
+// Local instance to avoid shadowing global 'supabase' from CDN
+let supabaseClient = null;
+try {
+    if (typeof supabase !== 'undefined') {
+        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    }
+} catch (e) {
+    console.error('Supabase client error:', e);
+}
 
 class RoomManager {
     constructor() {
         this.storageKey = 'bluebirds_rooms';
-        this.configKey = 'bluebirds_config';
+        this.supabase = supabaseClient;
         this.init();
     }
 
     async init() {
         console.group('RoomManager Initialization');
-        if (!localStorage.getItem(this.configKey)) {
-            localStorage.setItem(this.configKey, JSON.stringify({
-                sheetUrl: DEFAULT_SHEET_URL,
-                lastSync: null
-            }));
-        }
-
+        
+        // Load from localStorage first (offline capability)
         if (!localStorage.getItem(this.storageKey)) {
             localStorage.setItem(this.storageKey, JSON.stringify(DEFAULT_ROOMS));
-        } else {
-            // Aggressive Migration: Ensure ALL rooms have size/bedSize
-            const rooms = this.getAllRooms();
-            let changed = false;
-            Object.keys(rooms).forEach(id => {
-                const defaultRoom = DEFAULT_ROOMS[id] || Object.values(DEFAULT_ROOMS)[0];
-                if (!rooms[id].size || rooms[id].size.trim() === '' || !/\d/.test(rooms[id].size)) {
-                    rooms[id].size = defaultRoom.size; changed = true;
-                }
-                if (!rooms[id].bedSize || rooms[id].bedSize.trim() === '' || !/\d/.test(rooms[id].bedSize)) {
-                    rooms[id].bedSize = defaultRoom.bedSize; changed = true;
-                }
-            });
-            if (changed) {
-                console.log('Fixed room data in localStorage.');
-                localStorage.setItem(this.storageKey, JSON.stringify(rooms));
-            }
         }
 
-        const config = this.getConfig();
-        if (config.sheetUrl) {
-            console.log('Syncing starting...');
-            const result = await this.syncWithSheet();
-            console.log('Sync result:', result);
-            console.groupEnd();
-            return result;
-        }
+        // Try to sync from Supabase
+        await this.syncFromSupabase();
+        
         console.groupEnd();
         return { success: true };
     }
 
     getAllRooms() {
-        return JSON.parse(localStorage.getItem(this.storageKey));
+        const data = localStorage.getItem(this.storageKey);
+        return data ? JSON.parse(data) : DEFAULT_ROOMS;
     }
 
-    getConfig() {
-        return JSON.parse(localStorage.getItem(this.configKey));
+    async syncFromSupabase() {
+        if (!this.supabase) {
+            console.warn('Supabase not initialized');
+            return { success: false, message: 'Supabase client missing' };
+        }
+
+        try {
+            const { data, error } = await this.supabase
+                .from('rooms')
+                .select('*');
+
+            if (error) throw error;
+
+            if (data && data.length > 0) {
+                const rooms = {};
+                data.forEach(row => {
+                    rooms[row.id] = {
+                        name: row.name,
+                        size: row.size,
+                        bedSize: row.bed_size,
+                        weekdayPrice: row.weekday_price,
+                        weekendPrice: row.weekend_price,
+                        images: [
+                            { src: RoomManager.convertGDriveLink(row.image_main), category: 'Room View' },
+                            { src: RoomManager.convertGDriveLink(row.image_window), category: 'Window View' }
+                        ],
+                        amenities: row.amenities || []
+                    };
+                });
+                localStorage.setItem(this.storageKey, JSON.stringify(rooms));
+                console.log('Synced with Supabase:', rooms);
+                return { success: true };
+            }
+            return { success: false, message: 'No data in Supabase' };
+        } catch (error) {
+            console.error('Supabase Sync Error:', error.message);
+            return { success: false, message: error.message };
+        }
     }
 
-    updateConfig(newConfig) {
-        const config = this.getConfig();
-        const updated = { ...config, ...newConfig };
-        localStorage.setItem(this.configKey, JSON.stringify(updated));
-    }
-
-    updateRoom(id, data) {
+    async updateRoom(id, data) {
+        // Update local storage
         const rooms = this.getAllRooms();
         rooms[id] = { ...rooms[id], ...data };
         localStorage.setItem(this.storageKey, JSON.stringify(rooms));
-        return true;
+
+        // Update Supabase
+        if (this.supabase) {
+            try {
+                const { error } = await this.supabase
+                    .from('rooms')
+                    .upsert({
+                        id: id,
+                        name: data.name,
+                        size: data.size,
+                        bed_size: data.bedSize,
+                        weekday_price: data.weekdayPrice,
+                        weekend_price: data.weekendPrice,
+                        image_main: data.images[0]?.src || '',
+                        image_window: data.images[1]?.src || '',
+                        amenities: data.amenities || []
+                    });
+                if (error) throw error;
+                return { success: true };
+            } catch (error) {
+                console.error('Supabase Update Error:', error.message);
+                return { success: false, message: error.message };
+            }
+        }
+        return { success: true }; // Local only if no supabase
     }
 
-    async syncWithSheet() {
-        const config = this.getConfig();
-        if (!config.sheetUrl) return { success: false, message: 'No Google Sheet URL provided' };
-
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 8000);
+    async pushLocalToSupabase() {
+        if (!this.supabase) return { success: false, message: 'Supabase client missing' };
+        
+        const rooms = this.getAllRooms();
+        const rows = Object.keys(rooms).map(id => {
+            const room = rooms[id];
+            return {
+                id: id,
+                name: room.name,
+                size: room.size,
+                bed_size: room.bedSize,
+                weekday_price: room.weekdayPrice,
+                weekend_price: room.weekendPrice,
+                image_main: room.images[0]?.src || '',
+                image_window: room.images[1]?.src || '',
+                amenities: room.amenities || []
+            };
+        });
 
         try {
-            const response = await fetch(config.sheetUrl, { signal: controller.signal });
-            clearTimeout(timeoutId);
-
-            let csvText = await response.text();
-            // STRIP UTF-8 BOM if present
-            if (csvText.charCodeAt(0) === 0xFEFF) {
-                csvText = csvText.substring(1);
-            }
-
-            const rooms = this.parseCSV(csvText);
-
-            if (Object.keys(rooms).length > 0) {
-                localStorage.setItem(this.storageKey, JSON.stringify(rooms));
-                this.updateConfig({ lastSync: new Date().toISOString() });
-                return { success: true, message: 'Sync successful!' };
-            }
-            return { success: false, message: 'No valid data found. Check your column headers (ID, Name, Size, BedSize).' };
+            const { error } = await this.supabase
+                .from('rooms')
+                .upsert(rows);
+            if (error) throw error;
+            return { success: true, message: `Successfully pushed ${rows.length} rooms to Supabase!` };
         } catch (error) {
-            clearTimeout(timeoutId);
-            console.error('Sync failed:', error);
-            return { success: false, message: 'Fetch failed. Ensure your spreadsheet is "Published to web" as CSV.' };
+            console.error('Supabase Push Error:', error.message);
+            return { success: false, message: error.message };
         }
-    }
-
-    parseCSV(csvText) {
-        const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
-        if (lines.length < 2) return {};
-
-        const headers = this.splitCSVLine(lines[0]);
-
-        // Smart Column Finding
-        const findColumn = (headers, synonyms) => {
-            const lowerHeaders = headers.map(h => h.trim().toLowerCase());
-            // 1. Try exact matches first
-            for (let syn of synonyms) {
-                const idx = lowerHeaders.indexOf(syn.toLowerCase());
-                if (idx !== -1) return idx;
-            }
-            // 2. Try fuzzy (contains)
-            for (let i = 0; i < lowerHeaders.length; i++) {
-                for (let syn of synonyms) {
-                    if (lowerHeaders[i].includes(syn.toLowerCase())) return i;
-                }
-            }
-            return -1;
-        };
-
-        const idx = {
-            id: findColumn(headers, ['ID', 'Room Number', 'RoomID', 'Room No']),
-            name: findColumn(headers, ['Name', 'Room Name', 'Title', 'Type']),
-            size: findColumn(headers, ['Size', 'Dimension', 'Area', 'Sqft']),
-            bed: findColumn(headers, ['Bed', 'BedSize', 'Bed Size']),
-            weekdayPrice: findColumn(headers, ['WeekdayPrice', 'Weekday Price', 'Mon-Fri Price', 'WeekdayRate']),
-            weekendPrice: findColumn(headers, ['WeekendPrice', 'Weekend Price', 'Sat-Sun Price', 'WeekendRate']),
-            imgMain: findColumn(headers, ['MainImage', 'Image1', 'Photo1']),
-            imgWindow: findColumn(headers, ['WindowImage', 'Image2', 'Photo2']),
-            amenities: findColumn(headers, ['Amenities', 'Features', 'Facility'])
-        };
-
-        // Safety: ensure ID and Name aren't mistakenly swapped
-        if (idx.id !== -1 && idx.id === idx.name) {
-            const otherName = headers.findIndex((h, i) => i !== idx.id && (h.toLowerCase().includes('name') || h.toLowerCase().includes('title')));
-            if (otherName !== -1) idx.name = otherName;
-        }
-
-        if (idx.id === -1) return {};
-
-        const rooms = {};
-        for (let i = 1; i < lines.length; i++) {
-            const values = this.splitCSVLine(lines[i]);
-            const getVal = (cIdx) => (cIdx !== -1 && values[cIdx]) ? values[cIdx].replace(/^"|"$/g, '').trim() : '';
-
-            const roomId = getVal(idx.id);
-            if (roomId) {
-                const roomRawSize = getVal(idx.size);
-                const roomRawBed = getVal(idx.bed);
-
-                // VALIDATION: Must contain at least one number to be valid dimension
-                const hasDigit = (str) => typeof str === 'string' && /\d/.test(str);
-
-                const finalSize = hasDigit(roomRawSize) ? roomRawSize : (DEFAULT_ROOMS[roomId]?.size || '14 × 16 ft');
-                const finalBed = hasDigit(roomRawBed) ? roomRawBed : (DEFAULT_ROOMS[roomId]?.bedSize || '6 × 7 ft');
-
-                const weekdayPrice = getVal(idx.weekdayPrice);
-                const weekendPrice = getVal(idx.weekendPrice);
-
-                rooms[roomId] = {
-                    name: getVal(idx.name) || `Room ${roomId}`,
-                    size: finalSize,
-                    bedSize: finalBed,
-                    weekdayPrice: weekdayPrice || (DEFAULT_ROOMS[roomId]?.weekdayPrice || '2000'),
-                    weekendPrice: weekendPrice || (DEFAULT_ROOMS[roomId]?.weekendPrice || '2500'),
-                    images: [
-                        { src: RoomManager.convertGDriveLink(getVal(idx.imgMain)), category: 'Room View' },
-                        { src: RoomManager.convertGDriveLink(getVal(idx.imgWindow)), category: 'Window View' }
-                    ],
-                    amenities: getVal(idx.amenities) ? getVal(idx.amenities).split(/[|;,]/).map(a => a.trim()) : (DEFAULT_ROOMS[roomId]?.amenities || [])
-                };
-            }
-        }
-        return rooms;
-    }
-
-    /**
-     * Robust CSV line splitter that handles quotes and commas
-     */
-    splitCSVLine(line) {
-        const result = [];
-        let cur = "";
-        let inQuote = false;
-
-        for (let i = 0; i < line.length; i++) {
-            const char = line[i];
-
-            if (char === '"') {
-                inQuote = !inQuote;
-            } else if (char === ',' && !inQuote) {
-                result.push(cur.trim());
-                cur = "";
-            } else {
-                cur += char;
-            }
-        }
-        result.push(cur.trim());
-        return result;
     }
 
     /**

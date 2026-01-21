@@ -135,27 +135,25 @@
             <button class="logout-btn" onclick="logout()">Logout</button>
         </header>
 
-        <!-- Google Sheets Sync Section -->
-        <div class="room-edit-card" style="margin-bottom: var(--spacing-xl); border: 2px border var(--accent-light);">
+        <!-- Supabase Migration Section -->
+        <div class="room-edit-card" style="margin-bottom: var(--spacing-xl); border: 2px solid var(--accent-light);">
             <h3 style="display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 1.5rem;">📊</span> Google Sheets Synchronization
+                <span style="font-size: 1.5rem;">🚀</span> Supabase Database Management
             </h3>
             <p style="color: var(--light-secondary); font-size: 0.9rem; margin-bottom: 20px;">
-                Update all room details, prices, and images directly from your Google Sheet.
+                Your website is now powered by Supabase. You can manage your rooms here or directly in the Supabase dashboard.
             </p>
 
-            <div class="edit-form-group">
-                <label>Published CSV URL</label>
-                <input type="text" id="sheetUrlInput" placeholder="Paste your published CSV link here...">
-            </div>
-
             <div style="display: flex; gap: 15px; align-items: center; margin-top: 15px;">
-                <button class="save-btn" style="margin-top: 0; flex: 1;" onclick="handleSync()">
-                    🔄 Sync Now
+                <button class="save-btn" style="margin-top: 0; flex: 1; background: var(--accent-light); color: var(--bg-dark);" onclick="handlePushToSupabase()">
+                    📤 Push Local Data to Supabase
                 </button>
-                <div id="syncStatus" style="color: var(--light-secondary); font-size: 0.85rem;">
-                    Last Sync: Never
-                </div>
+                <button class="save-btn" style="margin-top: 0; flex: 1;" onclick="handleRefreshFromSupabase()">
+                    🔄 Refresh from Supabase
+                </button>
+            </div>
+            <div id="dbStatus" style="color: var(--light-secondary); font-size: 0.85rem; margin-top: 10px; text-align: center;">
+                Status: Connected to Supabase
             </div>
         </div>
 
@@ -166,6 +164,7 @@
 
     <div id="toast" class="toast">Changes saved successfully!</div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="rooms-data.js"></script>
     <script>
         function logout() {
@@ -233,7 +232,7 @@
             document.getElementById(previewId).src = converted;
         }
 
-        function saveRoom(e, id) {
+        async function saveRoom(e, id) {
             e.preventDefault();
             const formData = new FormData(e.target);
             const mainImg = RoomManager.convertGDriveLink(formData.get('image'));
@@ -248,50 +247,48 @@
                 images: [
                     { src: mainImg, category: 'Room View' },
                     { src: windowImg, category: 'Window View' }
-                ]
+                ],
+                amenities: rooms[id]?.amenities || [] // Keep existing amenities
             };
 
-            roomManager.updateRoom(id, updatedData);
-            showToast('Changes saved successfully!');
-            // Update local rooms object and re-render to show changes
-            rooms[id] = { ...rooms[id], ...updatedData };
-            renderDashboard();
+            showToast('Saving to Supabase...');
+            const result = await roomManager.updateRoom(id, updatedData);
+            if (result.success) {
+                showToast('Changes saved successfully!');
+                rooms[id] = { ...rooms[id], ...updatedData };
+                renderDashboard();
+            } else {
+                alert('Error saving: ' + (result.message || 'Unknown error'));
+            }
         }
 
-        async function handleSync() {
-            const url = document.getElementById('sheetUrlInput').value;
-            if (!url) {
-                alert('Please enter a valid Google Sheet CSV URL first.');
-                return;
-            }
-
-            roomManager.updateConfig({ sheetUrl: url });
-            showToast('Syncing with Google Sheets...');
-
-            const result = await roomManager.syncWithSheet();
+        async function handlePushToSupabase() {
+            if (!confirm('This will upload all current local room data to Supabase. Continue?')) return;
+            
+            showToast('Pushing data to Supabase...');
+            const result = await roomManager.pushLocalToSupabase();
             if (result.success) {
                 showToast(result.message);
-                updateSyncStatusDisplay();
-                // Reload dashboard to show new data
-                location.reload();
+                updateStatusDisplay('Data pushed successfully!');
             } else {
-                alert('Sync Error: ' + result.message);
+                alert('Push Error: ' + result.message);
             }
         }
 
-        function updateSyncStatusDisplay() {
-            const config = roomManager.getConfig();
-            const statusDiv = document.getElementById('syncStatus');
-            const urlInput = document.getElementById('sheetUrlInput');
-
-            if (config.sheetUrl) {
-                urlInput.value = config.sheetUrl;
+        async function handleRefreshFromSupabase() {
+            showToast('Refreshing from Supabase...');
+            const result = await roomManager.syncFromSupabase();
+            if (result.success) {
+                showToast('Refreshed successfully!');
+                location.reload();
+            } else {
+                alert('Refresh Error: ' + result.message);
             }
+        }
 
-            if (config.lastSync) {
-                const date = new Date(config.lastSync);
-                statusDiv.textContent = `Last Sync: ${date.toLocaleString()}`;
-            }
+        function updateStatusDisplay(msg) {
+            const statusDiv = document.getElementById('dbStatus');
+            if (msg) statusDiv.textContent = 'Status: ' + msg;
         }
 
         function showToast(message) {
@@ -304,7 +301,7 @@
         async function initDashboard() {
             if (typeof roomManager !== 'undefined') {
                 await roomManager.init();
-                updateSyncStatusDisplay();
+                // updateStatusDisplay(); // Not needed yet
                 renderDashboard();
             }
         }
