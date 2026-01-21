@@ -282,9 +282,15 @@
         <!-- Bookings Section -->
         <div id="bookingsSection" class="tab-content active">
             <div class="room-edit-card" style="border: 2px solid #3b82f6;">
-                <h3 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
-                    <span style="font-size: 1.5rem;">📋</span> Received Bookings
-                </h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="display: flex; align-items: center; gap: 10px; margin: 0;">
+                        <span style="font-size: 1.5rem;">📋</span> Received Bookings
+                    </h3>
+                    <button onclick="refreshBookings()" id="refreshBookingsBtn" style="padding: 10px 20px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s ease;">
+                        <span style="font-size: 1.2rem;">🔄</span>
+                        <span>Refresh</span>
+                    </button>
+                </div>
                 <div id="bookingsContainer" style="display: grid; gap: 15px;">
                     <!-- Bookings will be loaded here -->
                     <div style="text-align: center; padding: 2rem; color: var(--light-secondary);">
@@ -563,6 +569,43 @@
                         <p>Error loading bookings: ${error.message}</p>
                     </div>
                 `;
+            }
+        }
+
+        async function refreshBookings() {
+            const btn = document.getElementById('refreshBookingsBtn');
+            const icon = btn.querySelector('span:first-child');
+            const text = btn.querySelector('span:last-child');
+            
+            // Disable button and show loading state
+            btn.disabled = true;
+            btn.style.opacity = '0.7';
+            text.textContent = 'Refreshing...';
+            icon.style.animation = 'spin 1s linear infinite';
+            
+            try {
+                // Reload bookings from database
+                await loadBookings();
+                
+                // Show success feedback
+                showToast('Bookings refreshed successfully!');
+                
+                // Reset button state
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    text.textContent = 'Refresh';
+                    icon.style.animation = '';
+                }, 500);
+            } catch (error) {
+                console.error('Error refreshing bookings:', error);
+                showToast('Error refreshing bookings');
+                
+                // Reset button state
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                text.textContent = 'Refresh';
+                icon.style.animation = '';
             }
         }
 
