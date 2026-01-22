@@ -11,10 +11,10 @@ const DEFAULT_ROOMS = {
         weekdayPrice: '2000',
         weekendPrice: '2500',
         images: [
-            { src: '/Users/jobin/.gemini/antigravity/brain/01aaeb87-cc2f-44f6-ad2e-d0b18e64bc98/room_101_main_1768541653997.png', category: 'Room View' },
-            { src: 'placeholder-window.jpg', category: 'Window View' },
-            { src: 'placeholder-frontage.jpg', category: 'Room Frontage' },
-            { src: 'placeholder-bathroom.jpg', category: 'Bathroom' }
+            { src: '/Users/jobin/.gemini/antigravity/brain/01aaeb87-cc2f-44f6-ad2e-d0b18e64bc98/room_101_main_1768541653997.png', caption: 'Room View' },
+            { src: 'placeholder-window.jpg', caption: 'Window View' },
+            { src: 'placeholder-frontage.jpg', caption: 'Room Frontage' },
+            { src: 'placeholder-bathroom.jpg', caption: 'Bathroom' }
         ],
         amenities: ['Air Conditioning', 'King Size Bed', 'Private Bathroom', 'Hot Water', '64" Smart TV', 'Music System']
     },
@@ -25,10 +25,10 @@ const DEFAULT_ROOMS = {
         weekdayPrice: '2000',
         weekendPrice: '2500',
         images: [
-            { src: '/Users/jobin/.gemini/antigravity/brain/01aaeb87-cc2f-44f6-ad2e-d0b18e64bc98/room_102_main_1768541671794.png', category: 'Room View' },
-            { src: 'placeholder-window.jpg', category: 'Window View' },
-            { src: 'placeholder-frontage.jpg', category: 'Room Frontage' },
-            { src: 'placeholder-bathroom.jpg', category: 'Bathroom' }
+            { src: '/Users/jobin/.gemini/antigravity/brain/01aaeb87-cc2f-44f6-ad2e-d0b18e64bc98/room_102_main_1768541671794.png', caption: 'Room View' },
+            { src: 'placeholder-window.jpg', caption: 'Window View' },
+            { src: 'placeholder-frontage.jpg', caption: 'Room Frontage' },
+            { src: 'placeholder-bathroom.jpg', caption: 'Bathroom' }
         ],
         amenities: ['Air Conditioning', 'King Size Bed', 'Private Bathroom', 'Hot Water', '64" Smart TV', 'Music System']
     },
@@ -39,10 +39,10 @@ const DEFAULT_ROOMS = {
         weekdayPrice: '2000',
         weekendPrice: '2500',
         images: [
-            { src: '/Users/jobin/.gemini/antigravity/brain/01aaeb87-cc2f-44f6-ad2e-d0b18e64bc98/room_103_main_1768541691301.png', category: 'Room View' },
-            { src: 'placeholder-window.jpg', category: 'Window View' },
-            { src: 'placeholder-frontage.jpg', category: 'Room Frontage' },
-            { src: 'placeholder-bathroom.jpg', category: 'Bathroom' }
+            { src: '/Users/jobin/.gemini/antigravity/brain/01aaeb87-cc2f-44f6-ad2e-d0b18e64bc98/room_103_main_1768541691301.png', caption: 'Room View' },
+            { src: 'placeholder-window.jpg', caption: 'Window View' },
+            { src: 'placeholder-frontage.jpg', caption: 'Room Frontage' },
+            { src: 'placeholder-bathroom.jpg', caption: 'Bathroom' }
         ],
         amenities: ['Air Conditioning', 'King Size Bed', 'Private Bathroom', 'Hot Water', '64" Smart TV', 'Music System']
     },
@@ -53,10 +53,10 @@ const DEFAULT_ROOMS = {
         weekdayPrice: '2000',
         weekendPrice: '2500',
         images: [
-            { src: '/Users/jobin/.gemini/antigravity/brain/01aaeb87-cc2f-44f6-ad2e-d0b18e64bc98/room_104_main_1768541709309.png', category: 'Room View' },
-            { src: 'placeholder-window.jpg', category: 'Window View' },
-            { src: 'placeholder-frontage.jpg', category: 'Room Frontage' },
-            { src: 'placeholder-bathroom.jpg', category: 'Bathroom' }
+            { src: '/Users/jobin/.gemini/antigravity/brain/01aaeb87-cc2f-44f6-ad2e-d0b18e64bc98/room_104_main_1768541709309.png', caption: 'Room View' },
+            { src: 'placeholder-window.jpg', caption: 'Window View' },
+            { src: 'placeholder-frontage.jpg', caption: 'Room Frontage' },
+            { src: 'placeholder-bathroom.jpg', caption: 'Bathroom' }
         ],
         amenities: ['Air Conditioning', 'King Size Bed', 'Private Bathroom', 'Hot Water', '64" Smart TV', 'Music System']
     },
@@ -67,10 +67,10 @@ const DEFAULT_ROOMS = {
         weekdayPrice: '2000',
         weekendPrice: '2500',
         images: [
-            { src: '/Users/jobin/.gemini/antigravity/brain/01aaeb87-cc2f-44f6-ad2e-d0b18e64bc98/room_106_main_1768541726497.png', category: 'Room View' },
-            { src: 'placeholder-window.jpg', category: 'Window View' },
-            { src: 'placeholder-frontage.jpg', category: 'Room Frontage' },
-            { src: 'placeholder-bathroom.jpg', category: 'Bathroom' }
+            { src: '/Users/jobin/.gemini/antigravity/brain/01aaeb87-cc2f-44f6-ad2e-d0b18e64bc98/room_106_main_1768541726497.png', caption: 'Room View' },
+            { src: 'placeholder-window.jpg', caption: 'Window View' },
+            { src: 'placeholder-frontage.jpg', caption: 'Room Frontage' },
+            { src: 'placeholder-bathroom.jpg', caption: 'Bathroom' }
         ],
         amenities: ['Air Conditioning', 'King Size Bed', 'Private Bathroom', 'Hot Water', '64" Smart TV', 'Music System']
     },
@@ -81,10 +81,10 @@ const DEFAULT_ROOMS = {
         weekdayPrice: '2000',
         weekendPrice: '2500',
         images: [
-            { src: '/Users/jobin/.gemini/antigravity/brain/01aaeb87-cc2f-44f6-ad2e-d0b18e64bc98/room_107_main_1768541743971.png', category: 'Room View' },
-            { src: 'placeholder-window.jpg', category: 'Window View' },
-            { src: 'placeholder-frontage.jpg', category: 'Room Frontage' },
-            { src: 'placeholder-bathroom.jpg', category: 'Bathroom' }
+            { src: '/Users/jobin/.gemini/antigravity/brain/01aaeb87-cc2f-44f6-ad2e-d0b18e64bc98/room_107_main_1768541743971.png', caption: 'Room View' },
+            { src: 'placeholder-window.jpg', caption: 'Window View' },
+            { src: 'placeholder-frontage.jpg', caption: 'Room Frontage' },
+            { src: 'placeholder-bathroom.jpg', caption: 'Bathroom' }
         ],
         amenities: ['Air Conditioning', 'King Size Bed', 'Private Bathroom', 'Hot Water', '64" Smart TV', 'Music System']
     },
@@ -95,10 +95,10 @@ const DEFAULT_ROOMS = {
         weekdayPrice: '1500',
         weekendPrice: '1800',
         images: [
-            { src: 'placeholder-dormitory.jpg', category: 'Dormitory View' },
-            { src: 'placeholder-window.jpg', category: 'Window View' },
-            { src: 'placeholder-frontage.jpg', category: 'Room Frontage' },
-            { src: 'placeholder-bathroom.jpg', category: 'Shared Bathroom' }
+            { src: 'placeholder-dormitory.jpg', caption: 'Dormitory View' },
+            { src: 'placeholder-window.jpg', caption: 'Window View' },
+            { src: 'placeholder-frontage.jpg', caption: 'Room Frontage' },
+            { src: 'placeholder-bathroom.jpg', caption: 'Shared Bathroom' }
         ],
         amenities: ['Air Conditioning', 'Multiple Beds', 'Shared Bathroom', 'Hot Water', '64" Smart TV', 'Music System']
     }
@@ -126,7 +126,7 @@ class RoomManager {
 
     async init() {
         console.group('RoomManager Initialization');
-        
+
         // Load from localStorage first (offline capability)
         if (!localStorage.getItem(this.storageKey)) {
             localStorage.setItem(this.storageKey, JSON.stringify(DEFAULT_ROOMS));
@@ -134,7 +134,7 @@ class RoomManager {
 
         // Try to sync from Supabase
         await this.syncFromSupabase();
-        
+
         console.groupEnd();
         return { success: true };
     }
@@ -166,9 +166,9 @@ class RoomManager {
                         bedSize: row.bed_size,
                         weekdayPrice: row.weekday_price,
                         weekendPrice: row.weekend_price,
-                        images: [
-                            { src: RoomManager.convertGDriveLink(row.image_main), category: 'Room View' },
-                            { src: RoomManager.convertGDriveLink(row.image_window), category: 'Window View' }
+                        images: row.images || [
+                            { src: RoomManager.convertGDriveLink(row.image_main), caption: 'Room View' },
+                            { src: RoomManager.convertGDriveLink(row.image_window), caption: 'Window View' }
                         ],
                         amenities: row.amenities || []
                     };
@@ -204,6 +204,7 @@ class RoomManager {
                         weekend_price: data.weekendPrice,
                         image_main: data.images[0]?.src || '',
                         image_window: data.images[1]?.src || '',
+                        images: data.images || [],  // Store full images array with captions
                         amenities: data.amenities || []
                     });
                 if (error) throw error;
@@ -218,7 +219,7 @@ class RoomManager {
 
     async pushLocalToSupabase() {
         if (!this.supabase) return { success: false, message: 'Supabase client missing' };
-        
+
         const rooms = this.getAllRooms();
         const rows = Object.keys(rooms).map(id => {
             const room = rooms[id];

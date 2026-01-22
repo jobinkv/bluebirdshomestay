@@ -326,7 +326,7 @@ document.addEventListener('DOMContentLoaded', function () {
             placeholder.style.cssText = 'width: 100%; height: 70vh; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 1rem; color: rgba(255, 255, 255, 0.7); border-radius: 12px;';
             placeholder.innerHTML = `
                 <span style="font-size: 4rem;">📷</span>
-                <span style="font-size: 1.2rem; font-weight: 600;">${currentImage.category}</span>
+                <span style="font-size: 1.2rem; font-weight: 600;">${currentImage.caption}</span>
                 <span style="font-size: 0.9rem;">Image Coming Soon - Replace with Your Photo</span>
             `;
             galleryImage.parentElement.appendChild(placeholder);
@@ -344,8 +344,8 @@ document.addEventListener('DOMContentLoaded', function () {
         // Update counter
         galleryCounter.textContent = `${currentImageIndex + 1} / ${currentGallery.length}`;
 
-        // Update category
-        galleryCategory.textContent = currentImage.category;
+        // Update caption
+        galleryCategory.textContent = currentImage.caption;
 
         // Update navigation buttons
         if (galleryPrev) {

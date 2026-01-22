@@ -249,6 +249,128 @@
             display: none;
             z-index: 1000;
         }
+
+        /* Image Manager Styles */
+        .image-manager {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .image-manager h4 {
+            color: var(--accent-light);
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .images-grid {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .image-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            display: grid;
+            grid-template-columns: 100px 1fr auto;
+            gap: 12px;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .image-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .image-item img {
+            width: 100px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 6px;
+            background: #111;
+        }
+
+        .image-item-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .image-item-details input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .image-item-details .file-name {
+            font-size: 0.75rem;
+            color: var(--light-secondary);
+        }
+
+        .remove-image-btn {
+            padding: 8px 12px;
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 0.85rem;
+        }
+
+        .remove-image-btn:hover {
+            background: rgba(255, 71, 87, 0.3);
+        }
+
+        .add-image-btn {
+            width: 100%;
+            padding: 12px;
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border: 2px dashed rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .add-image-btn:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+
+        .add-image-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .upload-progress {
+            margin-top: 5px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .upload-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #2563eb);
+            transition: width 0.3s ease;
+        }
     </style>
 </head>
 
@@ -270,7 +392,8 @@
         </header>
 
         <!-- Tab Navigation -->
-        <div style="display: flex; gap: 10px; margin-bottom: var(--spacing-xl); border-bottom: 2px solid var(--glass-border);">
+        <div
+            style="display: flex; gap: 10px; margin-bottom: var(--spacing-xl); border-bottom: 2px solid var(--glass-border);">
             <button class="tab-btn active" onclick="switchTab('bookings')" id="bookingsTab">
                 <span style="font-size: 1.2rem;">📋</span> Received Bookings
             </button>
@@ -286,7 +409,8 @@
                     <h3 style="display: flex; align-items: center; gap: 10px; margin: 0;">
                         <span style="font-size: 1.5rem;">📋</span> Received Bookings
                     </h3>
-                    <button onclick="refreshBookings()" id="refreshBookingsBtn" style="padding: 10px 20px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s ease;">
+                    <button onclick="refreshBookings()" id="refreshBookingsBtn"
+                        style="padding: 10px 20px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s ease;">
                         <span style="font-size: 1.2rem;">🔄</span>
                         <span>Refresh</span>
                     </button>
@@ -294,7 +418,9 @@
                 <div id="bookingsContainer" style="display: grid; gap: 15px;">
                     <!-- Bookings will be loaded here -->
                     <div style="text-align: center; padding: 2rem; color: var(--light-secondary);">
-                        <div class="sync-loader" style="width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: #3b82f6; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem;"></div>
+                        <div class="sync-loader"
+                            style="width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: #3b82f6; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem;">
+                        </div>
                         Loading bookings...
                     </div>
                 </div>
@@ -319,12 +445,12 @@
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
-            
+
             // Remove active class from all tabs
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            
+
             // Show selected tab content
             if (tabName === 'bookings') {
                 document.getElementById('bookingsSection').classList.add('active');
@@ -342,6 +468,11 @@
 
         const container = document.getElementById('roomContainer');
         const rooms = roomManager.getAllRooms();
+        const SUPABASE_STORAGE_BUCKET = 'room-images';
+        const MAX_IMAGES = 10;
+
+        // Store pending uploads for each room
+        const pendingUploads = {};
 
         function renderDashboard() {
             container.innerHTML = '';
@@ -351,7 +482,6 @@
                 card.className = 'room-edit-card';
                 card.innerHTML = `
                     <h3>Room ${id}</h3>
-                    <img src="${room.images[0].src}" class="image-preview-admin" id="preview-${id}">
                     <form onsubmit="saveRoom(event, '${id}')">
                         <div class="edit-form-group">
                             <label>Room Name</label>
@@ -378,30 +508,137 @@
                             </div>
                         </div>
                         <div class="edit-form-group">
-                            <label>Main Image URL or Google Drive Link</label>
-                            <input type="text" name="image" value="${room.images[0].src}" 
-                                   onchange="updatePreview(this, 'preview-${id}')"
-                                   placeholder="Paste link here...">
-                        </div>
-                        <div class="edit-form-group">
-                            <label>Window View Image (Link)</label>
-                            <input type="text" name="windowImage" value="${room.images[1]?.src || ''}">
-                        </div>
-                        <div class="edit-form-group">
                             <label>Amenities (Comma separated)</label>
                             <textarea name="amenities" style="width: 100%; padding: 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--white); border-radius: 6px; box-sizing: border-box; min-height: 80px;">${(room.amenities || []).join(', ')}</textarea>
                         </div>
+                        
+                        <!-- Image Manager -->
+                        <div class="image-manager">
+                            <h4>📸 Room Images (up to ${MAX_IMAGES})</h4>
+                            <div class="images-grid" id="images-grid-${id}">
+                                <!-- Images will be rendered here -->
+                            </div>
+                            <button type="button" class="add-image-btn" id="add-image-btn-${id}" onclick="addImageSlot('${id}')">
+                                <span>➕</span> Add Image
+                            </button>
+                        </div>
+                        
                         <button type="submit" class="save-btn" id="save-btn-${id}">Save Changes</button>
                     </form>
                 `;
                 container.appendChild(card);
+
+                // Initialize pending uploads for this room
+                if (!pendingUploads[id]) {
+                    pendingUploads[id] = [];
+                }
+
+                // Render existing images
+                renderImages(id, room.images || []);
             });
         }
 
-        function updatePreview(input, previewId) {
-            const val = input.value;
-            const converted = RoomManager.convertGDriveLink(val);
-            document.getElementById(previewId).src = converted;
+        function renderImages(roomId, images) {
+            const grid = document.getElementById(`images-grid-${roomId}`);
+            const addBtn = document.getElementById(`add-image-btn-${roomId}`);
+
+            grid.innerHTML = '';
+
+            images.forEach((img, index) => {
+                const imageItem = document.createElement('div');
+                imageItem.className = 'image-item';
+                imageItem.innerHTML = `
+                    <img src="${img.src}" alt="${img.caption || 'Room image'}">
+                    <div class="image-item-details">
+                        <input type="text" placeholder="Image caption..." value="${img.caption || ''}" 
+                               onchange="updateImageCaption('${roomId}', ${index}, this.value)">
+                        <div class="file-name">Image ${index + 1}</div>
+                    </div>
+                    <button type="button" class="remove-image-btn" onclick="removeImage('${roomId}', ${index})">
+                        🗑️ Remove
+                    </button>
+                `;
+                grid.appendChild(imageItem);
+            });
+
+            // Disable add button if max images reached
+            addBtn.disabled = images.length >= MAX_IMAGES;
+        }
+
+        function addImageSlot(roomId) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = (e) => handleFileSelect(e, roomId);
+            input.click();
+        }
+
+        async function handleFileSelect(event, roomId) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const room = rooms[roomId];
+            const currentImages = room.images || [];
+
+            if (currentImages.length >= MAX_IMAGES) {
+                alert(`Maximum ${MAX_IMAGES} images allowed per room`);
+                return;
+            }
+
+            // Create temporary preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const newImage = {
+                    src: e.target.result,
+                    caption: '',
+                    file: file,  // Store file for upload
+                    isPending: true
+                };
+
+                room.images.push(newImage);
+                renderImages(roomId, room.images);
+                showToast('Image added. Click "Save Changes" to upload.');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeImage(roomId, index) {
+            const room = rooms[roomId];
+            room.images.splice(index, 1);
+            renderImages(roomId, room.images);
+            showToast('Image removed');
+        }
+
+        function updateImageCaption(roomId, index, caption) {
+            const room = rooms[roomId];
+            if (room.images[index]) {
+                room.images[index].caption = caption;
+            }
+        }
+
+        async function uploadImageToSupabase(file, roomId, imageIndex) {
+            if (!supabaseClient) {
+                throw new Error('Supabase client not initialized');
+            }
+
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${roomId}/image_${imageIndex + 1}.${fileExt}`;
+
+            const { data, error } = await supabaseClient.storage
+                .from(SUPABASE_STORAGE_BUCKET)
+                .upload(fileName, file, {
+                    cacheControl: '3600',
+                    upsert: true
+                });
+
+            if (error) throw error;
+
+            // Get public URL
+            const { data: urlData } = supabaseClient.storage
+                .from(SUPABASE_STORAGE_BUCKET)
+                .getPublicUrl(fileName);
+
+            return urlData.publicUrl;
         }
 
         async function saveRoom(e, id) {
@@ -409,38 +646,65 @@
             const form = e.target;
             const saveBtn = document.getElementById(`save-btn-${id}`);
             const formData = new FormData(form);
-            
-            const mainImg = RoomManager.convertGDriveLink(formData.get('image'));
-            const windowImg = RoomManager.convertGDriveLink(formData.get('windowImage'));
+
             const amenitiesRaw = formData.get('amenities');
             const amenitiesArray = amenitiesRaw ? amenitiesRaw.split(',').map(a => a.trim()).filter(a => a !== '') : [];
 
-            const updatedData = {
-                name: formData.get('name'),
-                size: formData.get('size'),
-                bedSize: formData.get('bedSize'),
-                weekdayPrice: formData.get('weekdayPrice'),
-                weekendPrice: formData.get('weekendPrice'),
-                images: [
-                    { src: mainImg, category: 'Room View' },
-                    { src: windowImg, category: 'Window View' }
-                ],
-                amenities: amenitiesArray
-            };
-
             // UI Feedback
             saveBtn.disabled = true;
-            saveBtn.textContent = '⌛ Saving...';
+            saveBtn.textContent = '⌛ Uploading images...';
             saveBtn.style.opacity = '0.7';
 
             try {
+                const room = rooms[id];
+                const images = room.images || [];
+
+                // Upload any pending images
+                const uploadedImages = [];
+                for (let i = 0; i < images.length; i++) {
+                    const img = images[i];
+
+                    if (img.file && img.isPending) {
+                        // Upload to Supabase Storage
+                        try {
+                            const publicUrl = await uploadImageToSupabase(img.file, id, i);
+                            uploadedImages.push({
+                                src: publicUrl,
+                                caption: img.caption || ''
+                            });
+                            saveBtn.textContent = `⌛ Uploading ${i + 1}/${images.length}...`;
+                        } catch (uploadError) {
+                            console.error('Upload error:', uploadError);
+                            throw new Error(`Failed to upload image ${i + 1}: ${uploadError.message}`);
+                        }
+                    } else {
+                        // Keep existing image
+                        uploadedImages.push({
+                            src: img.src,
+                            caption: img.caption || ''
+                        });
+                    }
+                }
+
+                saveBtn.textContent = '⌛ Saving to database...';
+
+                const updatedData = {
+                    name: formData.get('name'),
+                    size: formData.get('size'),
+                    bedSize: formData.get('bedSize'),
+                    weekdayPrice: formData.get('weekdayPrice'),
+                    weekendPrice: formData.get('weekendPrice'),
+                    images: uploadedImages,
+                    amenities: amenitiesArray
+                };
+
                 const result = await roomManager.updateRoom(id, updatedData);
                 if (result.success) {
-                    showToast('Changes saved to Supabase!');
+                    showToast('✅ Changes saved successfully!');
                     rooms[id] = { ...rooms[id], ...updatedData };
                     renderDashboard();
                 } else {
-                    throw new Error(result.message || 'Supabase update failed');
+                    throw new Error(result.message || 'Database update failed');
                 }
             } catch (error) {
                 console.error('Save error:', error);
@@ -453,7 +717,7 @@
 
         async function handlePushToSupabase() {
             if (!confirm('This will upload all current local room data to Supabase. Continue?')) return;
-            
+
             showToast('Pushing data to Supabase...');
             const result = await roomManager.pushLocalToSupabase();
             if (result.success) {
@@ -489,7 +753,7 @@
 
         async function loadBookings() {
             const container = document.getElementById('bookingsContainer');
-            
+
             if (!supabaseClient) {
                 container.innerHTML = '<p style="color: #ff4757; text-align: center;">Supabase client not initialized</p>';
                 return;
@@ -517,10 +781,10 @@
                     const checkIn = new Date(booking.check_in);
                     const checkOut = new Date(booking.check_out);
                     const formatDate = (date) => {
-                        return date.toLocaleDateString('en-US', { 
-                            month: 'short', 
-                            day: 'numeric', 
-                            year: 'numeric' 
+                        return date.toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
                         });
                     };
 
@@ -576,20 +840,20 @@
             const btn = document.getElementById('refreshBookingsBtn');
             const icon = btn.querySelector('span:first-child');
             const text = btn.querySelector('span:last-child');
-            
+
             // Disable button and show loading state
             btn.disabled = true;
             btn.style.opacity = '0.7';
             text.textContent = 'Refreshing...';
             icon.style.animation = 'spin 1s linear infinite';
-            
+
             try {
                 // Reload bookings from database
                 await loadBookings();
-                
+
                 // Show success feedback
                 showToast('Bookings refreshed successfully!');
-                
+
                 // Reset button state
                 setTimeout(() => {
                     btn.disabled = false;
@@ -600,7 +864,7 @@
             } catch (error) {
                 console.error('Error refreshing bookings:', error);
                 showToast('Error refreshing bookings');
-                
+
                 // Reset button state
                 btn.disabled = false;
                 btn.style.opacity = '1';
